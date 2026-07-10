@@ -1,0 +1,828 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>КОНТЕНТ-ЦЕХ · Недвижимость</title>
+</head>
+<body>
+<!-- ARTIFACT-START -->
+<style>
+  :root{
+    --ground:#ECEDEB;
+    --panel:#F7F7F5;
+    --panel-2:#FFFFFF;
+    --ink:#17191C;
+    --ink-soft:#50555C;
+    --ink-faint:#8B9096;
+    --line:#C7C9C6;
+    --line-soft:#DDDEDA;
+    --accent:#E8420A;
+    --accent-ink:#FFFFFF;
+    --blue:#2B4BC8;
+    --good:#1E7A3C;
+    --warm:#8A6A00;
+    --flash:#FBE3D8;
+  }
+  :root[data-theme="dark"]{
+    --ground:#141619;
+    --panel:#1C1F23;
+    --panel-2:#23272C;
+    --ink:#ECEDEA;
+    --ink-soft:#A8ADB3;
+    --ink-faint:#6E747B;
+    --line:#3A3F45;
+    --line-soft:#2B3035;
+    --accent:#FF6A33;
+    --accent-ink:#17191C;
+    --blue:#8FA3F5;
+    --good:#5FBF7F;
+    --warm:#D9B44A;
+    --flash:#3A2A22;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ground:#141619;
+      --panel:#1C1F23;
+      --panel-2:#23272C;
+      --ink:#ECEDEA;
+      --ink-soft:#A8ADB3;
+      --ink-faint:#6E747B;
+      --line:#3A3F45;
+      --line-soft:#2B3035;
+      --accent:#FF6A33;
+      --accent-ink:#17191C;
+      --blue:#8FA3F5;
+      --good:#5FBF7F;
+      --warm:#D9B44A;
+      --flash:#3A2A22;
+    }
+  }
+
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--ground);
+    color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    font-size:16px;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  .mono{
+    font-family:ui-monospace,"SF Mono","Cascadia Mono","JetBrains Mono",Consolas,"Liberation Mono",monospace;
+  }
+  .wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+
+  a{color:var(--blue)}
+  button{font:inherit;color:inherit;cursor:pointer}
+  :focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+  /* ---------- title block (штамп) ---------- */
+  header{padding:34px 0 0}
+  .stamp{
+    border:2px solid var(--ink);
+    background:var(--panel);
+  }
+  .stamp-top{
+    display:flex;flex-wrap:wrap;align-items:stretch;
+    border-bottom:2px solid var(--ink);
+  }
+  .brand{
+    flex:1 1 380px;
+    padding:26px 24px 20px;
+    border-right:2px solid var(--ink);
+    min-width:280px;
+  }
+  .brand h1{
+    margin:0;
+    font-weight:900;
+    font-size:clamp(2.1rem,6vw,3.6rem);
+    line-height:.95;
+    letter-spacing:-.02em;
+    text-transform:uppercase;
+    text-wrap:balance;
+  }
+  .brand h1 .x{color:var(--accent)}
+  .brand p{
+    margin:.9em 0 0;
+    max-width:46ch;
+    color:var(--ink-soft);
+  }
+  .stamp-cells{
+    flex:1 1 260px;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    min-width:240px;
+  }
+  .cell{
+    padding:12px 14px;
+    border-left:1px solid var(--line);
+    border-top:1px solid var(--line);
+  }
+  .cell:nth-child(-n+2){border-top:none}
+  .cell dt{
+    margin:0;
+    font-size:.62rem;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--ink-faint);
+  }
+  .cell dd{
+    margin:.25em 0 0;
+    font-size:.86rem;
+    font-weight:600;
+  }
+  .hazard{
+    height:12px;
+    background:repeating-linear-gradient(-45deg,var(--accent) 0 14px,transparent 14px 28px);
+    border-top:2px solid var(--ink);
+  }
+  .theme-toggle{
+    background:none;border:1px solid var(--line);
+    padding:6px 10px;border-radius:2px;
+    font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--ink-soft);
+    margin-top:10px;
+  }
+  .theme-toggle:hover{border-color:var(--ink);color:var(--ink)}
+
+  /* ---------- nav ---------- */
+  nav{
+    position:sticky;top:0;z-index:20;
+    background:var(--ground);
+    border-bottom:2px solid var(--ink);
+    margin-top:26px;
+  }
+  .tabs{
+    display:flex;gap:0;overflow-x:auto;
+    max-width:1080px;margin:0 auto;padding:0 20px;
+  }
+  .tab{
+    background:none;border:none;
+    border-right:1px solid var(--line);
+    padding:13px 18px 11px;
+    font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--ink-soft);
+    white-space:nowrap;
+    border-bottom:4px solid transparent;
+  }
+  .tab:first-child{border-left:1px solid var(--line)}
+  .tab .n{color:var(--ink-faint);margin-right:.5em}
+  .tab[aria-selected="true"]{
+    color:var(--ink);font-weight:700;
+    border-bottom-color:var(--accent);
+  }
+  .tab:hover{color:var(--ink)}
+
+  main{padding:38px 0 30px}
+  section[hidden]{display:none}
+  .sec-head{margin:0 0 6px}
+  .sec-head .code{
+    font-size:.68rem;letter-spacing:.16em;color:var(--accent);
+    text-transform:uppercase;display:block;margin-bottom:6px;
+  }
+  .sec-head h2{
+    margin:0;font-weight:900;text-transform:uppercase;
+    font-size:clamp(1.5rem,3.4vw,2.1rem);letter-spacing:-.01em;
+    text-wrap:balance;
+  }
+  .sec-lede{max-width:64ch;color:var(--ink-soft);margin:.7em 0 28px}
+
+  /* ---------- rubricator ---------- */
+  .rgrid{
+    display:grid;gap:14px;
+    grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+  }
+  .rcard{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-top:3px solid var(--ink);
+    padding:18px 18px 16px;
+    display:flex;flex-direction:column;gap:10px;
+  }
+  .rcard-top{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+  .rcode{font-size:.7rem;letter-spacing:.14em;color:var(--accent)}
+  .rfreq{font-size:.66rem;letter-spacing:.1em;color:var(--ink-faint);text-transform:uppercase}
+  .rcard h3{margin:0;font-size:1.14rem;font-weight:800;text-transform:uppercase;letter-spacing:.01em}
+  .rcard .what{margin:0;color:var(--ink-soft);font-size:.92rem}
+  .rcard .psy{
+    margin:0;font-size:.8rem;color:var(--ink);
+    border-left:3px solid var(--blue);padding-left:10px;
+  }
+  .rcard .psy b{color:var(--blue);font-weight:700}
+  .rcard .go{
+    margin-top:auto;align-self:flex-start;
+    background:none;border:1px solid var(--line);
+    padding:7px 12px;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--ink-soft);border-radius:2px;
+  }
+  .rcard .go:hover{border-color:var(--accent);color:var(--accent)}
+
+  /* ---------- ideas ---------- */
+  .toolbar{
+    display:flex;flex-wrap:wrap;gap:10px;align-items:center;
+    padding:14px;border:1px solid var(--line);background:var(--panel);
+    margin-bottom:10px;
+  }
+  .toolbar input[type="search"]{
+    flex:1 1 200px;min-width:160px;
+    background:var(--panel-2);border:1px solid var(--line);
+    color:var(--ink);padding:9px 12px;font:inherit;font-size:.92rem;border-radius:2px;
+  }
+  .roulette{
+    background:var(--accent);color:var(--accent-ink);
+    border:none;padding:10px 16px;border-radius:2px;
+    font-weight:800;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;
+  }
+  .roulette:hover{filter:brightness(1.08)}
+  .progress{font-size:.72rem;letter-spacing:.08em;color:var(--ink-soft);white-space:nowrap}
+  .progress b{color:var(--good)}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 22px}
+  .chip{
+    background:var(--panel);border:1px solid var(--line);border-radius:999px;
+    padding:5px 12px;font-size:.72rem;letter-spacing:.06em;color:var(--ink-soft);
+  }
+  .chip[aria-pressed="true"]{
+    background:var(--ink);color:var(--ground);border-color:var(--ink);font-weight:700;
+  }
+  .chip:hover{border-color:var(--ink);color:var(--ink)}
+  .chip[aria-pressed="true"]:hover{color:var(--ground)}
+
+  .ideas{display:flex;flex-direction:column;gap:8px}
+  .idea{
+    display:flex;gap:14px;align-items:flex-start;
+    background:var(--panel);border:1px solid var(--line);
+    padding:14px 16px;
+    transition:background .5s;
+  }
+  .idea.done{opacity:.55}
+  .idea.done .it{text-decoration:line-through}
+  .idea.flash{background:var(--flash);border-color:var(--accent)}
+  .idea .code{
+    flex:0 0 auto;font-size:.68rem;letter-spacing:.1em;color:var(--ink-faint);
+    padding-top:3px;min-width:52px;
+  }
+  .idea-body{flex:1 1 auto;min-width:0}
+  .idea .it{margin:0;font-weight:700;font-size:1rem}
+  .idea .id{margin:.3em 0 0;color:var(--ink-soft);font-size:.88rem;max-width:70ch}
+  .badges{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+  .badge{
+    font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;
+    border:1px solid var(--line);border-radius:2px;padding:2px 7px;color:var(--ink-soft);
+  }
+  .badge.p-viral{border-color:var(--accent);color:var(--accent)}
+  .badge.p-sell{border-color:var(--good);color:var(--good)}
+  .badge.p-warm{border-color:var(--warm);color:var(--warm)}
+  .shot{
+    flex:0 0 auto;
+    background:none;border:1px solid var(--line);border-radius:2px;
+    padding:7px 11px;font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--ink-soft);
+  }
+  .shot:hover{border-color:var(--good);color:var(--good)}
+  .idea.done .shot{border-color:var(--good);color:var(--good);font-weight:700}
+  .empty{padding:30px;text-align:center;color:var(--ink-faint);border:1px dashed var(--line)}
+
+  /* ---------- hooks ---------- */
+  .gen{
+    border:2px solid var(--ink);background:var(--panel);
+    padding:24px;margin-bottom:34px;
+  }
+  .gen-label{font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-faint)}
+  .gen-out{
+    margin:12px 0 18px;min-height:3.2em;
+    font-size:clamp(1.15rem,2.6vw,1.55rem);font-weight:800;line-height:1.3;
+    text-wrap:balance;
+  }
+  .hgroups{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}
+  .hgroup{background:var(--panel);border:1px solid var(--line);padding:16px 18px}
+  .hgroup h3{
+    margin:0 0 4px;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);
+  }
+  .hgroup .why{margin:0 0 12px;font-size:.8rem;color:var(--ink-faint)}
+  .hgroup ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:9px}
+  .hgroup li{
+    font-size:.92rem;font-weight:600;
+    border-left:3px solid var(--line);padding-left:10px;
+  }
+
+  /* ---------- psychology ---------- */
+  .pgrid{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(320px,1fr))}
+  .pcard{background:var(--panel);border:1px solid var(--line);padding:18px}
+  .pcard .pn{
+    font-size:.68rem;letter-spacing:.14em;color:var(--blue);text-transform:uppercase;
+  }
+  .pcard h3{margin:.4em 0 .4em;font-size:1.05rem;font-weight:800}
+  .pcard p{margin:0;color:var(--ink-soft);font-size:.9rem}
+  .pcard .do{
+    margin-top:12px;font-size:.82rem;color:var(--ink);
+    border-top:1px dashed var(--line);padding-top:10px;
+  }
+  .pcard .do b{color:var(--good)}
+
+  /* ---------- system ---------- */
+  .steps{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin-bottom:34px}
+  .step{border:1px solid var(--line);background:var(--panel);padding:16px 18px;border-top:3px solid var(--accent)}
+  .step .sn{font-size:.66rem;letter-spacing:.14em;color:var(--accent)}
+  .step h3{margin:.35em 0 .3em;font-size:1rem;font-weight:800;text-transform:uppercase}
+  .step p{margin:0;font-size:.86rem;color:var(--ink-soft)}
+  .tblwrap{overflow-x:auto;border:1px solid var(--line);margin-bottom:34px}
+  table{border-collapse:collapse;width:100%;min-width:640px;background:var(--panel)}
+  th,td{border:1px solid var(--line-soft);padding:10px 12px;text-align:left;font-size:.88rem;vertical-align:top}
+  th{
+    font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint);
+    font-weight:700;background:var(--panel-2);
+  }
+  td .day{font-size:.66rem;letter-spacing:.1em;color:var(--accent);display:block}
+  .rules{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}
+  .rule{border-left:3px solid var(--accent);padding:2px 0 2px 14px}
+  .rule h3{margin:0 0 .2em;font-size:.95rem;font-weight:800}
+  .rule p{margin:0;font-size:.86rem;color:var(--ink-soft)}
+  .num{font-variant-numeric:tabular-nums}
+
+  footer{
+    border-top:2px solid var(--ink);margin-top:20px;
+    padding:18px 0 40px;
+    color:var(--ink-faint);font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{scroll-behavior:auto!important;transition:none!important}
+  }
+</style>
+
+<header class="wrap">
+  <div class="stamp">
+    <div class="stamp-top">
+      <div class="brand">
+        <h1>Контент-<span class="x">Цех</span><br>Недвижимость</h1>
+        <p>Личная платформа контент-производства: рубрикатор, банк идей, хуки и система, собранные под одну задачу — миллионные охваты, которые нативно продают метры.</p>
+        <button class="theme-toggle mono" id="themeBtn" type="button">Тема: авто</button>
+      </div>
+      <dl class="stamp-cells mono">
+        <div class="cell"><dt>Объект</dt><dd>Личная платформа</dd></div>
+        <div class="cell"><dt>Стадия</dt><dd>«П» — производство</dd></div>
+        <div class="cell"><dt>Масштаб</dt><dd class="num">1 : 1 000 000 👁</dd></div>
+        <div class="cell"><dt>Листов</dt><dd>5</dd></div>
+        <div class="cell"><dt>Рубрик</dt><dd class="num" id="statR">—</dd></div>
+        <div class="cell"><dt>Идей в банке</dt><dd class="num" id="statI">—</dd></div>
+      </dl>
+    </div>
+    <div class="hazard" aria-hidden="true"></div>
+  </div>
+</header>
+
+<nav aria-label="Разделы">
+  <div class="tabs mono" role="tablist">
+    <button class="tab" role="tab" data-tab="rubrics" aria-selected="true"><span class="n">Л1</span>Рубрикатор</button>
+    <button class="tab" role="tab" data-tab="ideas" aria-selected="false"><span class="n">Л2</span>Банк идей</button>
+    <button class="tab" role="tab" data-tab="hooks" aria-selected="false"><span class="n">Л3</span>Хуки</button>
+    <button class="tab" role="tab" data-tab="psy" aria-selected="false"><span class="n">Л4</span>Психология</button>
+    <button class="tab" role="tab" data-tab="system" aria-selected="false"><span class="n">Л5</span>Система</button>
+  </div>
+</nav>
+
+<main class="wrap">
+
+<!-- ЛИСТ 1 · РУБРИКАТОР -->
+<section id="sec-rubrics" role="tabpanel">
+  <div class="sec-head">
+    <span class="code mono">Лист 1 · Рубрикатор</span>
+    <h2>10 рубрик — 10 несущих стен канала</h2>
+  </div>
+  <p class="sec-lede">Каждая рубрика решает одну психологическую задачу и имеет свой формат-флагман. Вместе они закрывают весь цикл: охват → доверие → прогрев → заявка. Не запускайте все сразу — начните с Р-01, Р-03 и Р-06, они дают охваты быстрее всего.</p>
+  <div class="rgrid" id="rgrid"></div>
+</section>
+
+<!-- ЛИСТ 2 · БАНК ИДЕЙ -->
+<section id="sec-ideas" role="tabpanel" hidden>
+  <div class="sec-head">
+    <span class="code mono">Лист 2 · Банк идей</span>
+    <h2>Конкретные ролики, готовые к съёмке</h2>
+  </div>
+  <p class="sec-lede">Отмечайте снятое — прогресс сохраняется в этом браузере. Кнопка «Что снимать сегодня» выберет случайную неснятую идею с учётом фильтров.</p>
+  <div class="toolbar">
+    <button class="roulette" id="roulette" type="button">🎲 Что снимать сегодня</button>
+    <input type="search" id="q" placeholder="Поиск по идеям…" aria-label="Поиск по идеям">
+    <span class="progress mono" id="progress"></span>
+  </div>
+  <div class="chips" id="rubChips" role="group" aria-label="Фильтр по рубрике"></div>
+  <div class="chips" id="potChips" role="group" aria-label="Фильтр по типу"></div>
+  <div class="ideas" id="ideaList"></div>
+  <div class="empty" id="ideaEmpty" hidden>Ничего не нашлось — снимите фильтры или измените запрос.</div>
+</section>
+
+<!-- ЛИСТ 3 · ХУКИ -->
+<section id="sec-hooks" role="tabpanel" hidden>
+  <div class="sec-head">
+    <span class="code mono">Лист 3 · Хуки</span>
+    <h2>Первые 3 секунды решают всё</h2>
+  </div>
+  <p class="sec-lede">Алгоритм показывает ролик миллионам только если первые зрители не свайпнули. Хук — это не «привет, я риелтор». Это удар: цифра, запрет, вызов или оборванная история.</p>
+  <div class="gen">
+    <span class="gen-label mono">Генератор хуков · нажмите и забирайте</span>
+    <p class="gen-out" id="genOut">Эта розетка обойдётся вам в 400 000 ₽. И застройщик об этом молчит.</p>
+    <button class="roulette" id="genBtn" type="button">⚡ Сгенерировать хук</button>
+  </div>
+  <div class="hgroups" id="hgroups"></div>
+</section>
+
+<!-- ЛИСТ 4 · ПСИХОЛОГИЯ -->
+<section id="sec-psy" role="tabpanel" hidden>
+  <div class="sec-head">
+    <span class="code mono">Лист 4 · Психология</span>
+    <h2>Как продавать, не продавая</h2>
+  </div>
+  <p class="sec-lede">Люди ненавидят, когда им продают, — и обожают покупать. Задача контента: чтобы решение «хочу с этими ребятами» зритель принял сам, до первого касания с менеджером.</p>
+  <div class="pgrid" id="pgrid"></div>
+</section>
+
+<!-- ЛИСТ 5 · СИСТЕМА -->
+<section id="sec-system" role="tabpanel" hidden>
+  <div class="sec-head">
+    <span class="code mono">Лист 5 · Система</span>
+    <h2>Конвейер, а не вдохновение</h2>
+  </div>
+  <p class="sec-lede">Миллион просмотров — это не лотерея, а статистика: регулярность × сильный хук × досмотр. Один съёмочный день в неделю закрывает всю сетку.</p>
+
+  <div class="steps">
+    <div class="step"><span class="sn mono">Такт 1 · 0–3 сек</span><h3>Хук</h3><p>Цифра-шок, запрет или вызов. Текст на экране дублирует голос — 70% смотрят без звука.</p></div>
+    <div class="step"><span class="sn mono">Такт 2 · 3–20 сек</span><h3>Удержание</h3><p>Каждые 3–5 секунд — новый кадр, факт или счётчик на экране. Ни одной «мёртвой» секунды.</p></div>
+    <div class="step"><span class="sn mono">Такт 3 · финал</span><h3>Пейофф</h3><p>Обещание хука выполнено полностью. Обманутый зритель не возвращается никогда.</p></div>
+    <div class="step"><span class="sn mono">Такт 4 · титры</span><h3>Открытая петля</h3><p>«В следующей серии вскрываем стяжку» — и прикреплённый комментарий с целевым действием.</p></div>
+  </div>
+
+  <div class="sec-head"><h2 style="font-size:1.2rem">Недельная сетка</h2></div>
+  <p class="sec-lede">7 выходов в неделю, из них продающих — максимум два. Остальное кормит алгоритм.</p>
+  <div class="tblwrap">
+    <table>
+      <thead><tr><th>День</th><th>Рубрика</th><th>Зачем именно здесь</th></tr></thead>
+      <tbody>
+        <tr><td class="mono"><span class="day">ПН</span>Ликбез-60</td><td>Р-09 · деньги и ловушки</td><td>Понедельник — день «полезного» настроения: максимум сохранений, они тянут ролик 2–3 дня.</td></tr>
+        <tr><td class="mono"><span class="day">ВТ</span>Ревизор</td><td>Р-01 · приёмка, флагман</td><td>Главная экспертная рубрика выходит, когда аудитория уже разогрета сохранениями понедельника.</td></tr>
+        <tr><td class="mono"><span class="day">СР</span>Строй-ASMR</td><td>Р-06 · процесс</td><td>Середина недели — усталость, залипательный контент без смысловой нагрузки досматривают на 90%+.</td></tr>
+        <tr><td class="mono"><span class="day">ЧТ</span>Угадай цену</td><td>Р-03 · интерактив</td><td>Комментарии четверга разгоняют охват к пятнице — алгоритм любит споры о деньгах.</td></tr>
+        <tr><td class="mono"><span class="day">ПТ</span>Внутрянка</td><td>Р-10 · сериал офиса</td><td>Пятница — время развлечений: скетчи и «риелтор слышит всё» шерят в чаты выходного дня.</td></tr>
+        <tr><td class="mono"><span class="day">СБ</span>До/После</td><td>Р-02 · трансформации</td><td>В выходной смотрят дольше — сюда ставим самые красивые и длинные трансформации.</td></tr>
+        <tr><td class="mono"><span class="day">ВС</span>Люди и метры</td><td>Р-05 · эмоции + мягкая продажа</td><td>Вечер воскресенья — люди мечтают о своей квартире. Единственный день с прямым CTA.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="sec-head"><h2 style="font-size:1.2rem">Правила цеха</h2></div>
+  <p class="sec-lede" style="margin-bottom:20px">Проверено сорока годами продакшена. Нарушать можно — но осознанно.</p>
+  <div class="rules">
+    <div class="rule"><h3>80 / 20</h3><p>8 роликов кормят алгоритм, 2 продают. Канал из одних «купите у нас» умирает за месяц — его хоронят сами зрители свайпом.</p></div>
+    <div class="rule"><h3>1 день = 7 роликов</h3><p>Один съёмочный день в неделю: один объект даёт Ревизора, ASMR, Угадай цену и До/После одновременно. Снимаем вертикально, свет — окно.</p></div>
+    <div class="rule"><h3>Метрика №1 — досмотр</h3><p>До 60 сек держим досмотр выше 70%. Просмотры — следствие. Лайки — тщеславие. Сохранения и шеры — деньги.</p></div>
+    <div class="rule"><h3>Переснимайте хук, не ролик</h3><p>Если ролик не полетел — в 9 случаях из 10 виноваты первые 3 секунды. Тот же материал с новым хуком — это новый ролик.</p></div>
+    <div class="rule"><h3>Лица важнее логотипа</h3><p>Люди подписываются на прораба Саныча и дерзкую Настю-приёмщицу, а не на ООО. Постоянные персонажи = сериальность = подписка.</p></div>
+    <div class="rule"><h3>Правило одного нуля</h3><p>Из 30 роликов один соберёт больше, чем остальные 29 вместе. Его формат немедленно превращаем в рубрику и повторяем, пока работает.</p></div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap mono">Контент-Цех · лист хранить постоянно · взамен инв. № — вдохновения</div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------- данные ---------- */
+  var RUBRICS = [
+    {c:"Р-01", n:"Ревизор", f:"2 / нед", what:"Приёмка квартир и экспертиза стройки: тепловизор, уровень, счётчик косяков на экране.", psy:"Страх потери + жажда справедливости", note:"«нас всех обманывают, а этот парень — на моей стороне». Флагман канала."},
+    {c:"Р-02", n:"До / После", f:"1 / нед", what:"Трансформации: убитая квартира → результат, с открытым бюджетом каждого этапа.", psy:"Визуальный дофамин", note:"мозг обожает завершённость. Цифры бюджета превращают залипание в доверие."},
+    {c:"Р-03", n:"Угадай цену", f:"1–2 / нед", what:"Интерактив: угадать цену по подъезду, найти отличие квартир за 3 и 30 млн.", psy:"Азарт + спор в комментариях", note:"каждый комментарий-ответ алгоритм читает как сигнал «покажи ещё людям»."},
+    {c:"Р-04", n:"Антириелтор", f:"1 / нед", what:"Разоблачение уловок рынка: переводчик с риелторского, ловушки объявлений и договоров.", psy:"Эффект «своего парня»", note:"покупают у того, кто предупредил об обмане, а не у того, кто красиво продал."},
+    {c:"Р-05", n:"Люди и метры", f:"1 / нед", what:"Истории клиентов: вручение ключей, путь к своей квартире, драмы сделок.", psy:"Эмпатия + социальное доказательство", note:"чужие слёзы счастья продают лучше любого оффера."},
+    {c:"Р-06", n:"Строй-ASMR", f:"1–2 / нед", what:"Залипательный процесс: идеальная штукатурка, укладка плитки, распаковка квартиры.", psy:"Сенсорное удовольствие", note:"досмотры 90%+ без единого слова — чистое топливо для алгоритма."},
+    {c:"Р-07", n:"Кинометры", f:"2 / мес", what:"Квартиры из кино, сериалов и клипов: сколько бы это стоило у нас на самом деле.", psy:"Заёмный интерес", note:"миллионы уже любят «Друзей» — мы просто встаём рядом с их любовью."},
+    {c:"Р-08", n:"Эксперимент", f:"2 / мес", what:"Тайный покупатель, прозвоны объявлений, соцэксперименты с ценами и арендой.", psy:"Любопытство + шок-ценность", note:"«а что будет, если…» — вопрос, который человек не может не досмотреть."},
+    {c:"Р-09", n:"Ликбез-60", f:"1–2 / нед", what:"Деньги за 60 секунд: ипотека, вычеты, задаток vs аванс, ловушки договоров.", psy:"Польза = сохранения", note:"сохранённый ролик алгоритм крутит несколько дней — это длинный хвост охвата."},
+    {c:"Р-10", n:"Внутрянка", f:"1 / нед", what:"Сериал про агентство: «риелтор слышит всё», сорванные сделки, стажёр, планёрки.", psy:"Парасоциальная связь", note:"зритель привязывается к персонажам и возвращается, как к сериалу."}
+  ];
+
+  var POTS = {viral:"🔥 виральный", sell:"💰 продающий", warm:"🧲 прогрев"};
+
+  var IDEAS = [
+    /* Р-01 Ревизор */
+    {r:0,p:"viral",t:"«Принимаем квартиру за 12 млн — нашли 47 косяков»",d:"Счётчик дефектов в углу экрана тикает весь ролик. Финал — реакция застройщика на претензию."},
+    {r:0,p:"viral",t:"Тепловизор против застройщика",d:"Зимой светим стены новостройки: где утекает тепло — там горит оранжевым. Страшно, наглядно, шерится соседям по ЖК."},
+    {r:0,p:"viral",t:"Шарик против пола",d:"Кладём шарик на стяжку — он поехал. Три секунды, миллион просмотров: любой может повторить у себя, это и есть виральность."},
+    {r:0,p:"viral",t:"Что скрывает натяжной потолок",d:"Вскрываем потолок в квартире с «идеальным ремонтом от собственника». Хук: «Лучше бы мы этого не делали»."},
+    {r:0,p:"sell",t:"Чек-лист приёмки за 60 секунд",d:"10 пунктов с текстом на экране. CTA — «сохрани, пригодится на приёмке». Сохранения превращаются в заявки на услугу."},
+    {r:0,p:"viral",t:"«Застройщик просил это удалить»",d:"Подборка дефектов, которые отказались устранять. Название компании запикано — интрига работает сильнее фамилий."},
+    {r:0,p:"sell",t:"Сколько стоит НЕ позвать приёмщика",d:"Считаем на экране: невыявленные дефекты одной реальной квартиры = 380 000 ₽ ремонта. Услуга приёмки = 8 000 ₽."},
+    {r:0,p:"viral",t:"Приёмка глазами застройщика",d:"Перевёртыш-скетч: играем прораба, который «сдаёт» квартиру. «Трещина? Это дизайнерский шов». Юмор + экспертиза."},
+    /* Р-02 До/После */
+    {r:1,p:"viral",t:"Бабушкин ковёр → скандинавия за 400к",d:"Таймлапс со всплывающим ценником каждого этапа. Финальный кадр — сплитскрин было/стало с общей суммой."},
+    {r:1,p:"viral",t:"Самая убитая квартира города",d:"Хоррор-осмотр с фонариком: скрип, обои слоями, находки прежних жильцов. Потом — ремонт-сериал из этой квартиры."},
+    {r:1,p:"viral",t:"Хрущёвка 30 м²: было / стало / сколько",d:"Тройной формат: 10 сек «было», 10 сек «стало», 10 сек — смета крупно. Комментарии взорвутся спором о ценах — нам это и нужно."},
+    {r:1,p:"sell",t:"Одна стена — плюс 300 000 к цене",d:"Хоумстейджинг: перекрасили стену, поменяли свет, убрали хлам — квартира продалась дороже. Доказательство услуги предпродажной подготовки."},
+    {r:1,p:"warm",t:"Флип за 90 дней — открытая математика",d:"Сериал: купили убитую, ремонтируем, продаём. Все цифры честно: покупка, смета, налоги, прибыль. Подписка ради финала."},
+    {r:1,p:"viral",t:"До/после глазами кота",d:"Камера на высоте 20 см проезжает квартиру до ремонта и после. Нестандартный ракурс = остановка скролла. Кот обязателен."},
+    {r:1,p:"viral",t:"Что можно сделать за 10 000 ₽",d:"Микротрансформации одной зоны: свет, ручки, плинтус. «Дёшево и сердито» — самая недооценённая ниша, аудитория огромна."},
+    /* Р-03 Угадай цену */
+    {r:2,p:"viral",t:"Угадай цену по подъезду",d:"Показываем только подъезд и двор. Цена — в конце, после паузы. Зритель обязан досмотреть, чтобы проверить себя."},
+    {r:2,p:"viral",t:"Квартира за 3 млн vs за 30 млн",d:"Сплитскрин одинаковых сцен: кухня/кухня, санузел/санузел. «Найди 10 отличий». Комментарии: «за 30 — грабёж» — идеальный спор."},
+    {r:2,p:"viral",t:"Что выберет таксист / бабушка / банкир",d:"Показываем три квартиры людям разных профессий, они угадывают цены и выбирают. Кастинг из прохожих — дешевле и живее."},
+    {r:2,p:"viral",t:"Машина времени: цена в 2015 / 2020 / сейчас",d:"Одна и та же квартира, три цифры. Боль и ностальгия — самое комментируемое сочетание в недвижимости."},
+    {r:2,p:"viral",t:"Сколько метров влезает в 10 млн",d:"Одна сумма — Москва, Сочи, Дубай, райцентр. Карта и метры на экране. Формат бесконечно повторяемый с любыми суммами."},
+    {r:2,p:"viral",t:"Квартира идеальна. Найди подвох",d:"Всё прекрасно, цена подозрительно низкая. Финал: окна на крематорий / сосед-барабанщик / история квартиры. Рубрика-детектив."},
+    {r:2,p:"warm",t:"Угадал цену — попадёшь в следующий ролик",d:"Механика возврата: автора самого точного комментария показываем и разбираем его логику. Аудитория возвращается проверять."},
+    /* Р-04 Антириелтор */
+    {r:3,p:"viral",t:"Переводчик с риелторского",d:"«Уютная» = маленькая. «Тихий двор» = окна в стену. «Торг у собственника» = цена завышена. Серийный формат, простой продакшен."},
+    {r:3,p:"viral",t:"Фото в объявлении vs реальность",d:"Широкоугольник против честной камеры в одной и той же комнате. Показываем, как «делают» 20 лишних метров."},
+    {r:3,p:"viral",t:"Позвонил по 10 объявлениям-приманкам",d:"Сколько квартир из «слишком дешёвых» объявлений существует? Спойлер: одна. Записи звонков + счётчик на экране."},
+    {r:3,p:"viral",t:"5 фраз — и уходите с просмотра",d:"«Собственник за границей», «задаток сегодня, документы потом»… Каждая фраза = реальная схема обмана, коротко объясняем какая."},
+    {r:3,p:"viral",t:"Читаем договор вслух",d:"Медленно зачитываем пункт мелким шрифтом из реального договора. Пауза. «Вы только что подписали бы вот это». Тишина продаёт страховку от ошибки."},
+    {r:3,p:"sell",t:"Почему я отговорил клиента от покупки",d:"Кейс: нашли проблему, сделка отменена, клиент сохранил 6 млн. Продажа доверием — сильнейший конвертер подписчика в клиента."},
+    {r:3,p:"sell",t:"Скрипт торга, который сбил 700 000",d:"Разыгрываем диалог по ролям: фраза → контрфраза. Зритель забирает скрипт, а запоминает — кто умеет торговаться за него."},
+    /* Р-05 Люди и метры */
+    {r:4,p:"viral",t:"Реакция на ключи",d:"Подборка вручений ключей: слёзы, объятия, звонок маме. Ноль слов о компании — логотип на папке с документами скажет всё."},
+    {r:4,p:"warm",t:"Она копила 11 лет",d:"Путь клиентки от съёмной комнаты до своей студии. Интервью + хроника. Финал — первый завтрак в новой кухне."},
+    {r:4,p:"viral",t:"Развод. Кому достанется квартира?",d:"Анонимные реальные кейсы раздела недвижимости как мини-драмы с юридической развязкой. Люди обожают чужие имущественные споры."},
+    {r:4,p:"viral",t:"Наследство с сюрпризом",d:"Квартира в наследство: прописанный незнакомец, долги, вторая семья. Детективный сторителлинг с пользой в финале."},
+    {r:4,p:"warm",t:"Первая ночь в новой квартире",d:"Отдаём клиентам камеру на вечер переезда: пицца на коробках, матрас на полу, счастье. UGC-формат, честный и тёплый."},
+    {r:4,p:"viral",t:"Сосед сверху",d:"Истории про соседей, которые срывали и спасали сделки. Рубрика, в которую зрители сами понесут свои истории в комментарии."},
+    {r:4,p:"sell",t:"Один день с покупателем",d:"POV-день: 5 просмотров, сомнения, торг, решение. В финале — честный разбор, почему выбрали именно эту. Нативная витрина сервиса."},
+    /* Р-06 Строй-ASMR */
+    {r:5,p:"viral",t:"Идеальная штукатурка",d:"Правило идёт по стене, смесь срезается одним движением, звук живой. Без музыки, без слов. Залипание 100%."},
+    {r:5,p:"viral",t:"Заливка пола: 8 часов за 40 секунд",d:"Таймлапс + вставки реального звука. Финал — шарик, который больше никуда не катится (связка с Р-01)."},
+    {r:5,p:"viral",t:"Плиточник-снайпер",d:"Прирезка под углом, шов в шов, крестики щёлкают. Мастер молчит. Титр в конце: «29 лет опыта». Уважение = доверие бренду."},
+    {r:5,p:"viral",t:"Звук хорошего и плохого ремонта",d:"Простукиваем стену: звонко — пустота под плиткой, глухо — порядок. Зритель уходит проверять свою ванную. Это и есть шер."},
+    {r:5,p:"viral",t:"Распаковка квартиры",d:"Снимаем защитную плёнку с дверей, окон, техники — гигантский анбоксинг. Самый недооценённый satisfying-формат в недвижимости."},
+    {r:5,p:"viral",t:"POV: я — перфоратор",d:"День из жизни инструмента: камера на перфораторе, шуруповёрте, миксере. Абсурд + залипание = рецепт репостов."},
+    {r:5,p:"viral",t:"Последняя плитка",d:"Финальные штрихи объектов: последняя плитка, последний мазок, ключ входит в замок. Серия «идеальных концовок» — коллекционный формат."},
+    /* Р-07 Кинометры */
+    {r:6,p:"viral",t:"Сколько стоит квартира Моники из «Друзей»",d:"Восстанавливаем планировку, считаем метры и цену в нашем городе. Финал: «а теперь вспомните, кем она работала»."},
+    {r:6,p:"viral",t:"Хата из клипа",d:"Разбираем интерьер из свежего клипа топ-артиста: сколько стоит повторить. Ловим волну чужого хайпа в первые 48 часов."},
+    {r:6,p:"viral",t:"Чулан Гарри Поттера по нормам СНиП",d:"Экспертно оцениваем чулан под лестницей: метраж, вентиляция, можно ли прописать. Юмор + настоящие нормы = виральная смесь."},
+    {r:6,p:"viral",t:"Строим планировку из аниме/сериала",d:"Берём культовую квартиру, делаем реальный 3D-тур и смету. Фанаты приносят охват, мы показываем компетенцию."},
+    {r:6,p:"viral",t:"Где жил бы герой на свою зарплату",d:"Участковый из сериала живёт в лофте? Считаем его реальную ипотеку и показываем настоящий вариант. Больно и смешно."},
+    {r:6,p:"viral",t:"Кухня-остров в хрущёвке",d:"Голливудская мечта против несущих стен: возможно ли вообще? Честный разбор с планировщиком. Спойлер: есть один способ."},
+    /* Р-08 Эксперимент */
+    {r:7,p:"viral",t:"Тайный покупатель",d:"Идём смотреть квартиры как обычные клиенты (без названий компаний). Фиксируем уловки и сервис. Рынок обсуждает неделю."},
+    {r:7,p:"viral",t:"Одна квартира — три объявления",d:"Публикуем один объект с тремя разными текстами и фото. Считаем звонки. Готовое доказательство, что упаковка решает."},
+    {r:7,p:"viral",t:"Неделя в студии 18 м²",d:"Челлендж: живём, работаем, готовим, принимаем гостей. Честный вердикт: кому подходит, кому — ни за что."},
+    {r:7,p:"viral",t:"100 человек: сколько стоит ваш метр?",d:"Спрашиваем прохожих, сколько стоит метр в их доме, сверяем с рынком. Разброс ответов — готовый вирусный монтаж."},
+    {r:7,p:"viral",t:"Сдадут ли квартиру с котом?",d:"Прозвон 30 арендодателей: кот, собака, двое детей, студент. Честная статистика отказов. Каждый арендатор пришлёт это другу."},
+    {r:7,p:"viral",t:"Выставили на 20% дороже рынка",d:"Что будет с переоценённой квартирой: сколько звонков, какие торги, когда сдался продавец. Лечим главную боль собственников."},
+    {r:7,p:"sell",t:"Продадим за 30 дней или покажем всё",d:"Публичный челлендж с реальным объектом: вся кухня продажи в ежедневных сериях. Провал тоже контент — честность подкупает."},
+    /* Р-09 Ликбез-60 */
+    {r:8,p:"viral",t:"Ипотека на 30 лет: реальная сумма",d:"Первая секунда — итоговая цифра крупно. Потом объяснение и как сократить переплату на треть. Цифра-шок = стоп-скролл."},
+    {r:8,p:"viral",t:"3 пункта договора, из-за которых теряют квартиры",d:"Каждый пункт — реальная история в одно предложение. CTA: «сохрани, покажешь юристу». Сохранения = длинный охват."},
+    {r:8,p:"viral",t:"Государство должно вам 650 000 ₽",d:"Налоговый вычет, о котором забывает половина покупателей. Пошагово за 60 секунд. Самый шерибельный ликбез в нише."},
+    {r:8,p:"viral",t:"Маткапитал: 4 ошибки",d:"Ошибки, из-за которых сделки разворачивают через годы. Целевая аудитория — родители — самая активная в шерах."},
+    {r:8,p:"sell",t:"Проверка квартиры за 15 минут",d:"Что проверить до задатка: выписки, долги, прописанные. В финале — «или пришлите адрес нам, проверим бесплатно». Лидген в чистом виде."},
+    {r:8,p:"viral",t:"Аванс vs задаток: слово за 100 000 ₽",d:"Два слова, которые путают все — и теряют деньги. Разница на пальцах за 40 секунд. Вечнозелёный ролик, будет собирать годами."},
+    {r:8,p:"warm",t:"Прогноз цен с проверкой",d:"Ежемесячно: «что будет с ценами» + честная сверка прошлого прогноза. Смелость признавать промахи строит репутацию лучше побед."},
+    /* Р-10 Внутрянка */
+    {r:9,p:"viral",t:"Риелтор слышит всё",d:"Скетчи по реальным репликам клиентов: «а можно без документов, но надёжно?». Отраслевой юмор шерят и клиенты, и конкуренты."},
+    {r:9,p:"viral",t:"Сделка сорвалась за час до подписания",d:"Сторителлинг у окна офиса: живой рассказ, одна склейка, реальная развязка. Формат «байки из цеха» — дешевле некуда, работает всегда."},
+    {r:9,p:"viral",t:"Сколько зарабатывает риелтор",d:"Честные цифры: комиссия, расходы, месяцы без сделок. Самая кликабельная тема ниши — и фильтр адекватных кандидатов в команду."},
+    {r:9,p:"warm",t:"Планёрка без цензуры",d:"60 секунд настоящей планёрки: споры об объекте, разбор провала. Люди любят подглядывать за работой — дайте им щёлочку."},
+    {r:9,p:"warm",t:"POV: день агента",d:"12 показов, 40 звонков, одна сделка. Камера от первого лица, счётчики на экране. Уважение к профессии = доверие к компании."},
+    {r:9,p:"viral",t:"Самый странный запрос месяца",d:"«Ищу квартиру, где не было ссор» — ежемесячная рубрика. Зрители начнут присылать свои истории — контент делает сам себя."},
+    {r:9,p:"warm",t:"Стажёр против сделки",d:"Реалити: новичок ведёт первую сделку, наставник комментирует. Открытая петля в каждой серии — подписка ради развязки."}
+  ];
+
+  var HOOK_GROUPS = [
+    {n:"Цифра-шок", why:"Конкретное число мозг обязан «допроверить» — свайп откладывается.", items:[
+      "Эта квартира подешевела на миллион, пока вы листали ленту.",
+      "47 косяков в квартире за 12 миллионов. Считаем вместе.",
+      "Ипотека на 30 лет — это 2,7 цены вашей квартиры. Доказываю.",
+      "Один звонок сбил цену на 700 000. Вот как он звучал."
+    ]},
+    {n:"Запрет и секрет", why:"Запретное знание — древнейший крючок: нельзя пройти мимо тайны.", items:[
+      "Застройщик попросил удалить это видео.",
+      "Риелторы ненавидят эту фразу. Скажите её на просмотре.",
+      "В договоре аренды есть пункт, который никто не читает. Зря.",
+      "Нам запретили показывать этот этаж. Показываю."
+    ]},
+    {n:"Вызов зрителю", why:"Брошенный вызов включает азарт — ответ пишут в комментарии, алгоритм ликует.", items:[
+      "Угадаете цену по подъезду — с меня разбор вашей квартиры.",
+      "Найдите в этом видео причину, почему её никто не покупает.",
+      "Поставьте на паузу и посчитайте косяки. Моё число — в конце.",
+      "Вы бы здесь жили? Отвечайте честно."
+    ]},
+    {n:"Оборванная история", why:"Незакрытая петля создаёт напряжение, которое снимается только досмотром.", items:[
+      "Мы вскрыли натяжной потолок. Лучше бы этого не делали.",
+      "Клиент отказался от сделки за час до подписания. Из-за одной бумаги.",
+      "Это самая дешёвая квартира города. И вот почему она никому не нужна.",
+      "Бабушка продавала квартиру 4 года. Мы нашли причину за 10 минут."
+    ]}
+  ];
+
+  var GEN = {
+    a:["Эта розетка","Этот пункт договора №4.2","Эта трещина на потолке","Этот «уютный» балкон","Эта квартира с идеальным ремонтом","Этот тихий зелёный двор","Эта скидка от застройщика","Этот бесплатный юрист застройщика","Это «выгодное» предложение","Этот вид из окна"],
+    b:["обойдётся вам в 400 000 ₽","съест половину вашей ипотеки","стоила моему клиенту квартиры","убьёт цену при перепродаже","превратит новостройку в вечный ремонт","заберёт ваш первоначальный взнос","добавит 6 лет к вашей ипотеке","сорвёт вам сделку в последний день"],
+    c:["И застройщик об этом молчит.","Риелтор вам этого не скажет.","В объявлении об этом ни слова.","Банк надеется, что вы не заметите.","Мы узнали об этом слишком поздно.","Досмотрите — покажу, как это проверить.","Проверяется за 30 секунд — показываю.","А теперь смотрите, как этого избежать."]
+  };
+
+  var PSY = [
+    {n:"Приём 01",h:"Продавайте следующий шаг, а не квартиру",p:"Никто не покупает квартиру из ролика. Из ролика покупают шаг: сохранить чек-лист, написать «хочу разбор», прийти на просмотр.",d:"В виральных роликах CTA — только микрошаг. «Купите» оставьте менеджеру."},
+    {n:"Приём 02",h:"Будьте на стороне зрителя, не рынка",p:"Человек ждёт подвоха от всех, кто продаёт метры. Тот, кто вскрывает уловки рынка, автоматически выходит из категории «продавцов» в категорию «своих».",d:"Раз в неделю публично отговаривайте от плохой покупки. Это лучшая реклама из возможных."},
+    {n:"Приём 03",h:"Чужое счастье продаёт лучше оффера",p:"Ролик «реакция на ключи» не продаёт ничего — и продаёт всё: зритель примеряет эмоцию на себя и запоминает, с кем она случилась.",d:"Снимайте каждое вручение ключей. Это бесплатный конвейер социальных доказательств."},
+    {n:"Приём 04",h:"Конкретика вместо обещаний",p:"«Поможем выгодно» — шум. «Сбили 700 000 за 40 минут торга» — факт, который мозг сохраняет и пересказывает друзьям.",d:"В каждом ролике минимум одна точная цифра из реальной практики."},
+    {n:"Приём 05",h:"Дефицит — фактом, не капслоком",p:"«УСПЕЙ КУПИТЬ!» вызывает защитную реакцию. «В этом доме осталось две таких планировки» — просто информация, но действует сильнее.",d:"Дефицит произносится один раз, спокойным тоном, без восклицательного знака."},
+    {n:"Приём 06",h:"Незакрытые петли",p:"Сериал держит зрителя оборванной сценой. Канал — так же: «в следующей серии вскрываем стяжку» превращает случайного зрителя в подписчика.",d:"Каждый флагманский ролик заканчивайте анонсом следующего."},
+    {n:"Приём 07",h:"Продажа живёт в закрепе",p:"Ролик собирает миллион, потому что не продаёт. Продаёт закреплённый комментарий: «Чек-лист приёмки — по слову ЦЕХ в директ».",d:"Виральный ролик + продающий закреп = охват и лиды без конфликта."},
+    {n:"Приём 08",h:"Персонажи сильнее логотипа",p:"Подписываются на прораба Саныча и Настю-приёмщицу, а не на юрлицо. Персонаж с характером = сериальность = привычка возвращаться.",d:"Введите 2–3 постоянных лица с ролями: эксперт, скептик, новичок."},
+    {n:"Приём 09",h:"Дайте зрителю почувствовать себя умным",p:"Форматы «угадай цену» и «найди подвох» работают, потому что зритель выигрывает. Победивший зритель ассоциирует победу с вашим каналом.",d:"Никогда не высмеивайте неправильные ответы в комментариях. Умными должны уйти все."},
+    {n:"Приём 10",h:"Признание ошибки — валюта доверия",p:"Прогноз не сбылся, флип ушёл в минус — покажите это. Один честный разбор провала стоит десяти кейсов успеха: он невоспроизводим конкурентами.",d:"Раз в квартал — ролик «где мы ошиблись». Смотрите, как растёт глубина комментариев."}
+  ];
+
+  /* ---------- утилиты ---------- */
+  function $(id){return document.getElementById(id)}
+  function el(tag,cls,html){var e=document.createElement(tag);if(cls)e.className=cls;if(html!=null)e.innerHTML=html;return e}
+  var LS_DONE="ceh.done", LS_THEME="ceh.theme";
+  function loadDone(){try{return JSON.parse(localStorage.getItem(LS_DONE)||"[]")}catch(e){return[]}}
+  function saveDone(a){try{localStorage.setItem(LS_DONE,JSON.stringify(a))}catch(e){}}
+  var done=loadDone();
+
+  $("statR").textContent=RUBRICS.length;
+  $("statI").textContent=IDEAS.length;
+
+  /* ---------- тема ---------- */
+  var themeBtn=$("themeBtn"), themes=["auto","light","dark"],
+      themeNames={auto:"авто",light:"светлая",dark:"тёмная"};
+  function applyTheme(t){
+    if(t==="auto"){document.documentElement.removeAttribute("data-theme")}
+    else{document.documentElement.setAttribute("data-theme",t)}
+    themeBtn.textContent="Тема: "+themeNames[t];
+  }
+  var savedTheme=(function(){try{return localStorage.getItem(LS_THEME)}catch(e){return null}})()||"auto";
+  if(themes.indexOf(savedTheme)<0)savedTheme="auto";
+  /* «авто» не трогает data-theme: его может выставлять внешняя обёртка (просмотрщик) */
+  if(savedTheme==="auto"){themeBtn.textContent="Тема: авто"}
+  else{applyTheme(savedTheme)}
+  themeBtn.addEventListener("click",function(){
+    savedTheme=themes[(themes.indexOf(savedTheme)+1)%themes.length];
+    try{localStorage.setItem(LS_THEME,savedTheme)}catch(e){}
+    applyTheme(savedTheme);
+  });
+
+  /* ---------- вкладки ---------- */
+  var tabs=Array.prototype.slice.call(document.querySelectorAll(".tab"));
+  function showTab(name){
+    tabs.forEach(function(t){t.setAttribute("aria-selected",String(t.dataset.tab===name))});
+    ["rubrics","ideas","hooks","psy","system"].forEach(function(s){
+      $("sec-"+s).hidden=(s!==name);
+    });
+    window.scrollTo({top:0});
+  }
+  tabs.forEach(function(t){t.addEventListener("click",function(){showTab(t.dataset.tab)})});
+
+  /* ---------- рубрикатор ---------- */
+  var rgrid=$("rgrid");
+  RUBRICS.forEach(function(r,i){
+    var card=el("article","rcard");
+    card.appendChild(el("div","rcard-top",
+      '<span class="rcode mono">'+r.c+'</span><span class="rfreq mono">'+r.f+'</span>'));
+    card.appendChild(el("h3",null,r.n));
+    card.appendChild(el("p","what",r.what));
+    card.appendChild(el("p","psy","<b>"+r.psy+"</b> — "+r.note));
+    var go=el("button","go mono","Идеи рубрики →");
+    go.type="button";
+    go.addEventListener("click",function(){
+      rubFilter=i; potFilter=null; $("q").value="";
+      renderChips(); renderIdeas(); showTab("ideas");
+    });
+    card.appendChild(go);
+    rgrid.appendChild(card);
+  });
+
+  /* ---------- банк идей ---------- */
+  var rubFilter=null, potFilter=null;
+  var rubChips=$("rubChips"), potChips=$("potChips"),
+      ideaList=$("ideaList"), ideaEmpty=$("ideaEmpty"), q=$("q");
+
+  function chip(label,pressed,fn){
+    var b=el("button","chip mono",label);
+    b.type="button";
+    b.setAttribute("aria-pressed",String(pressed));
+    b.addEventListener("click",fn);
+    return b;
+  }
+  function renderChips(){
+    rubChips.innerHTML="";
+    rubChips.appendChild(chip("Все рубрики",rubFilter===null,function(){rubFilter=null;renderChips();renderIdeas()}));
+    RUBRICS.forEach(function(r,i){
+      rubChips.appendChild(chip(r.c+" "+r.n,rubFilter===i,function(){
+        rubFilter=(rubFilter===i?null:i);renderChips();renderIdeas();
+      }));
+    });
+    potChips.innerHTML="";
+    potChips.appendChild(chip("Все типы",potFilter===null,function(){potFilter=null;renderChips();renderIdeas()}));
+    Object.keys(POTS).forEach(function(p){
+      potChips.appendChild(chip(POTS[p],potFilter===p,function(){
+        potFilter=(potFilter===p?null:p);renderChips();renderIdeas();
+      }));
+    });
+  }
+
+  function ideaCode(i){
+    var r=IDEAS[i].r, n=0;
+    for(var k=0;k<=i;k++){if(IDEAS[k].r===r)n++}
+    return RUBRICS[r].c.replace("Р-","")+"."+(n<10?"0"+n:n);
+  }
+  function matches(idea){
+    if(rubFilter!==null&&idea.r!==rubFilter)return false;
+    if(potFilter!==null&&idea.p!==potFilter)return false;
+    var s=q.value.trim().toLowerCase();
+    if(s&&(idea.t+" "+idea.d).toLowerCase().indexOf(s)<0)return false;
+    return true;
+  }
+  function renderProgress(){
+    $("progress").innerHTML="Снято <b>"+done.length+"</b> / "+IDEAS.length;
+  }
+  function renderIdeas(){
+    ideaList.innerHTML="";
+    var shown=0;
+    IDEAS.forEach(function(idea,i){
+      if(!matches(idea))return;
+      shown++;
+      var code=ideaCode(i);
+      var card=el("article","idea"+(done.indexOf(i)>=0?" done":""));
+      card.dataset.idx=i;
+      card.appendChild(el("span","code mono",code));
+      var body=el("div","idea-body");
+      body.appendChild(el("h3","it",idea.t));
+      body.appendChild(el("p","id",idea.d));
+      var badges=el("div","badges mono");
+      badges.appendChild(el("span","badge",RUBRICS[idea.r].c+" "+RUBRICS[idea.r].n));
+      badges.appendChild(el("span","badge p-"+idea.p,POTS[idea.p]));
+      body.appendChild(badges);
+      card.appendChild(body);
+      var btn=el("button","shot mono",done.indexOf(i)>=0?"✓ снято":"снято?");
+      btn.type="button";
+      btn.addEventListener("click",function(){
+        var at=done.indexOf(i);
+        if(at>=0)done.splice(at,1);else done.push(i);
+        saveDone(done);renderIdeas();renderProgress();
+      });
+      card.appendChild(btn);
+      ideaList.appendChild(card);
+    });
+    ideaEmpty.hidden=shown>0;
+    renderProgress();
+  }
+  q.addEventListener("input",renderIdeas);
+
+  $("roulette").addEventListener("click",function(){
+    var pool=[];
+    IDEAS.forEach(function(idea,i){
+      if(matches(idea)&&done.indexOf(i)<0)pool.push(i);
+    });
+    if(!pool.length){
+      IDEAS.forEach(function(idea,i){if(done.indexOf(i)<0)pool.push(i)});
+      if(pool.length){rubFilter=null;potFilter=null;q.value="";renderChips();renderIdeas()}
+    }
+    if(!pool.length)return;
+    var pick=pool[Math.floor(Math.random()*pool.length)];
+    var card=ideaList.querySelector('[data-idx="'+pick+'"]');
+    if(card){
+      card.classList.add("flash");
+      card.scrollIntoView({behavior:"smooth",block:"center"});
+      setTimeout(function(){card.classList.remove("flash")},2400);
+    }
+  });
+
+  renderChips();
+  renderIdeas();
+
+  /* ---------- хуки ---------- */
+  var hg=$("hgroups");
+  HOOK_GROUPS.forEach(function(g){
+    var box=el("div","hgroup");
+    box.appendChild(el("h3","mono",g.n));
+    box.appendChild(el("p","why",g.why));
+    var ul=el("ul");
+    g.items.forEach(function(h){ul.appendChild(el("li",null,h))});
+    box.appendChild(ul);
+    hg.appendChild(box);
+  });
+  function rnd(a){return a[Math.floor(Math.random()*a.length)]}
+  $("genBtn").addEventListener("click",function(){
+    $("genOut").textContent=rnd(GEN.a)+" "+rnd(GEN.b)+". "+rnd(GEN.c);
+  });
+
+  /* ---------- психология ---------- */
+  var pg=$("pgrid");
+  PSY.forEach(function(p){
+    var c=el("article","pcard");
+    c.appendChild(el("span","pn mono",p.n));
+    c.appendChild(el("h3",null,p.h));
+    c.appendChild(el("p",null,p.p));
+    c.appendChild(el("p","do","<b>Как применять:</b> "+p.d));
+    pg.appendChild(c);
+  });
+})();
+</script>
+<!-- ARTIFACT-END -->
+</body>
+</html>
