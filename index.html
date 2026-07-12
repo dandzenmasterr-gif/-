@@ -341,6 +341,37 @@
   .rule p{margin:0;font-size:.86rem;color:var(--ink-soft)}
   .num{font-variant-numeric:tabular-nums}
 
+  /* ---------- свежее ---------- */
+  .fdate{
+    display:flex;align-items:center;gap:12px;
+    margin:26px 0 10px;
+    font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);
+  }
+  .fdate::after{content:"";flex:1;border-top:1px dashed var(--line)}
+  .fdate:first-child{margin-top:0}
+  .fdate .fnew{
+    background:var(--accent);color:var(--accent-ink);
+    padding:2px 8px;border-radius:2px;font-weight:700;
+  }
+
+  /* ---------- нейро ---------- */
+  .prompt{
+    margin-top:12px;border:1px dashed var(--line);background:var(--ground);
+    padding:10px 12px;font-size:.76rem;line-height:1.5;color:var(--ink-soft);
+    word-break:break-word;
+  }
+  .prompt .plabel{
+    display:block;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--ink-faint);margin-bottom:4px;
+  }
+  .copybtn{
+    margin-top:10px;background:none;border:1px solid var(--line);border-radius:2px;
+    padding:6px 11px;font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--ink-soft);
+  }
+  .copybtn:hover{border-color:var(--blue);color:var(--blue)}
+  .ntool{border-color:var(--blue);color:var(--blue)}
+
   footer{
     border-top:2px solid var(--ink);margin-top:20px;
     padding:18px 0 40px;
@@ -364,7 +395,7 @@
         <div class="cell"><dt>Объект</dt><dd>Личная платформа</dd></div>
         <div class="cell"><dt>Стадия</dt><dd>«П» — производство</dd></div>
         <div class="cell"><dt>Масштаб</dt><dd class="num">1 : 1 000 000 👁</dd></div>
-        <div class="cell"><dt>Листов</dt><dd>5</dd></div>
+        <div class="cell"><dt>Листов</dt><dd>7</dd></div>
         <div class="cell"><dt>Рубрик</dt><dd class="num" id="statR">—</dd></div>
         <div class="cell"><dt>Идей в банке</dt><dd class="num" id="statI">—</dd></div>
       </dl>
@@ -380,6 +411,8 @@
     <button class="tab" role="tab" data-tab="hooks" aria-selected="false"><span class="n">Л3</span>Хуки</button>
     <button class="tab" role="tab" data-tab="psy" aria-selected="false"><span class="n">Л4</span>Психология</button>
     <button class="tab" role="tab" data-tab="system" aria-selected="false"><span class="n">Л5</span>Система</button>
+    <button class="tab" role="tab" data-tab="fresh" aria-selected="false"><span class="n">Л6</span>Свежее</button>
+    <button class="tab" role="tab" data-tab="neuro" aria-selected="false"><span class="n">Л7</span>Нейро-ролики</button>
   </div>
 </nav>
 
@@ -480,6 +513,26 @@
     <div class="rule"><h3>Лица важнее логотипа</h3><p>Люди подписываются на прораба Саныча и дерзкую Настю-приёмщицу, а не на ООО. Постоянные персонажи = сериальность = подписка.</p></div>
     <div class="rule"><h3>Правило одного нуля</h3><p>Из 30 роликов один соберёт больше, чем остальные 29 вместе. Его формат немедленно превращаем в рубрику и повторяем, пока работает.</p></div>
   </div>
+</section>
+
+<!-- ЛИСТ 6 · СВЕЖЕЕ -->
+<section id="sec-fresh" role="tabpanel" hidden>
+  <div class="sec-head">
+    <span class="code mono">Лист 6 · Свежее</span>
+    <h2>Ночные поставки идей</h2>
+  </div>
+  <p class="sec-lede">Каждую ночь в 00:00 цех подвозит свежую партию: новые идеи под тренды и сезон. Новое — сверху, с датой поставки. Понравившееся забирайте в работу, остальное само уйдёт в архив ленты.</p>
+  <div id="freshList"></div>
+</section>
+
+<!-- ЛИСТ 7 · НЕЙРО-РОЛИКИ -->
+<section id="sec-neuro" role="tabpanel" hidden>
+  <div class="sec-head">
+    <span class="code mono">Лист 7 · Нейро-ролики</span>
+    <h2>То, что нельзя снять камерой</h2>
+  </div>
+  <p class="sec-lede">Идеи для генерации в нейросетях — Veo, Sora, Runway, Kling, Midjourney. Такие ролики останавливают скролл, потому что мозг не понимает, как это снято. К каждой идее — заготовка промпта: генерируйте на английском, добавляйте «vertical 9:16, photorealistic, 4k» и детали вашего объекта.</p>
+  <div class="pgrid" id="neuroGrid"></div>
 </section>
 </main>
 
@@ -623,6 +676,34 @@
     c:["И застройщик об этом молчит.","Риелтор вам этого не скажет.","В объявлении об этом ни слова.","Банк надеется, что вы не заметите.","Мы узнали об этом слишком поздно.","Досмотрите — покажу, как это проверить.","Проверяется за 30 секунд — показываю.","А теперь смотрите, как этого избежать."]
   };
 
+  /* Ночные поставки: новые записи добавлять В НАЧАЛО массива */
+  var FRESH = [
+    {date:"12.07.2026", items:[
+      {t:"Цена метра в граммах золота",d:"Пересчитываем квартиру в золото, айфоны и шаурму: «эта однушка = 1 240 шаурмы в месяц 30 лет». Абсурдная единица измерения = скриншоты и репосты."},
+      {t:"Собери квартиру за свою зарплату",d:"Стрит-интервью: называют зарплату — на экране конструктор собирает, что реально купить: полкомнаты, санузел в области, кладовка в центре. Больно, смешно, вирусно."},
+      {t:"Окно в окно: рейтинг худших видов города",d:"Зрители присылают фото из своих окон, мы делаем еженедельный «антирейтинг видов» с оценкой, на сколько такой вид роняет цену. Контент делает сама аудитория."}
+    ]}
+  ];
+
+  var NEURO = [
+    {t:"Дом из детского рисунка",d:"Оживляем рисунок ребёнка в фотореалистичный дом с облётом камеры. Запускаем UGC-волну: «присылайте рисунки — построим». Родители затащат вам весь охват города.",p:"A child's crayon drawing of a house transforms into a photorealistic modern building, camera orbits around it, morphing animation, warm evening light, vertical 9:16"},
+    {t:"Таймлапс столетия",d:"Один и тот же перекрёсток: 1925 → 1965 → 1995 → 2025 → 2125. Дома растут, стили меняются, в финале — ваш ЖК. История города за 20 секунд.",p:"Same street corner evolving through decades 1925 to 2125, buildings morphing between architectural styles, seamless timelapse transitions, cinematic, vertical 9:16"},
+    {t:"Квартира собирается сама",d:"Пустая бетонная коробка: мебель влетает в окна, обои разворачиваются рулонами, свет вспыхивает. Финальный титр: «мы делаем это 90 дней, нейросеть — 8 секунд. зато у нас по-настоящему».",p:"Empty concrete apartment assembling itself: furniture flying in through windows, wallpaper unrolling across walls, lamps lighting up one by one, satisfying stop-motion style, vertical 9:16"},
+    {t:"Разрез дома, как кукольный",d:"Камера отъезжает — фасад многоэтажки снят, видно все квартиры разом: кто ужинает, кто делает ремонт, кто спит. «В каждой ячейке — жизнь. Найдём вашу».",p:"Cross-section dollhouse view of a residential building at night, camera slowly pulling back revealing dozens of lit apartments with tiny people living their lives, Wes Anderson style, vertical 9:16"},
+    {t:"Многоэтажка-торт",d:"Гигантский нож разрезает панельку как торт: этажи — коржи, утеплитель — крем. Сюр, от которого невозможно оторваться. Подпись: «а из чего на самом деле — в следующем ролике».",p:"Giant knife slicing a residential apartment building like a layered cake, floors as sponge layers, insulation as cream filling, hyperrealistic food commercial style, vertical 9:16"},
+    {t:"Прораб-великан",d:"Гигантский строитель в каске аккуратно ставит дома на район, как ребёнок — кубики LEGO, сверяясь с чертежом. Брендируем каску — и это уже реклама.",p:"A giant construction worker in a hard hat gently placing apartment buildings onto a city district like LEGO blocks, checking a blueprint, golden hour, cinematic scale, vertical 9:16"},
+    {t:"Студия-трансформер",d:"18 метров раскладываются как швейцарский нож: кровать уходит в стену, стол выезжает из подоконника, гардероб — из зеркала. Финал: реальная планировка-трансформер из вашего каталога.",p:"Tiny 18 sqm studio apartment transforming like a Swiss army knife: bed folding into wall, desk sliding out of windowsill, mirror rotating into wardrobe, smooth mechanical animation, vertical 9:16"},
+    {t:"Путешествие внутрь стены",d:"Камера ныряет в розетку и летит внутри стены: провода как метро, утеплитель как сугробы, кирпич как каньоны. «Вот за что вы платите на самом деле» — ликбез о качестве стройки.",p:"Microscopic camera journey inside an apartment wall: electrical wires like subway tunnels, insulation like snow canyons, brick layers like cliffs, macro photography style, vertical 9:16"},
+    {t:"Наш ЖК в 2124 году",d:"Тот же двор через сто лет: летающий транспорт, сады на крышах, но дом стоит. Слоган: «строим на век — проверите». Смелое обещание, которое запоминается.",p:"Modern residential complex courtyard in year 2124: flying vehicles, rooftop gardens, holographic signs, the same building well-preserved, optimistic sci-fi, vertical 9:16"},
+    {t:"Ипотека: хоррор-трейлер",d:"Стилизованный трейлер фильма ужасов «30 ЛЕТ»: тёмный коридор банка, эхо «одобрено…». Твист в конце: «страшно только без расчёта. посчитаем — станет просто цифрой».",p:"Horror movie trailer style: dark endless bank corridor, flickering fluorescent lights, ominous stamped documents flying, dramatic red title text, cinematic film grain, vertical 9:16"},
+    {t:"Дом-Мёбиус",d:"ASMR-облёт невозможной архитектуры: лестницы Эшера, дом-лента Мёбиуса, бесконечный подъезд. Подпись: «нравится невозможное? реальные планировки не хуже — в профиле».",p:"Impossible Escher-style residential building: staircases looping into themselves, Mobius strip apartment block, clouds passing through windows, dreamlike, smooth drone orbit, vertical 9:16"},
+    {t:"Город из бетономешалки",d:"Бетономешалка наклоняется — и из неё выливается готовый микрорайон: дома, дороги, деревья встают на места. Метафора «строим под ключ» в одном кадре.",p:"Concrete mixer truck pouring out a complete miniature city district: buildings, roads and trees rising from the flowing concrete and snapping into place, tilt-shift miniature style, vertical 9:16"},
+    {t:"Ремонт-морфинг за 2 секунды",d:"Бабушкин ковёр на стене плавно перетекает в скандинавский интерьер и обратно — гипнотическая петля. Идеальный зацикленный ролик: его досматривают по три раза.",p:"Seamless morphing loop: old soviet apartment with carpet on wall smoothly transforming into minimalist scandinavian interior and back, satisfying transition, perfect loop, vertical 9:16"},
+    {t:"Квартиры героев — в нашем городе",d:"Нейро-рендеры: как выглядела бы квартира Шерлока, Тони Старка или Гарри Поттера в типовой планировке вашего ЖК. Серийный формат с бесконечным запасом героев.",p:"Iconic fictional character's apartment reimagined inside a typical modern Russian apartment layout, recognizable style details, interior design photography, vertical 9:16"},
+    {t:"Дом по знаку зодиака",d:"12 серий: нейросеть генерирует дом мечты для каждого знака. Львам — пафос, ракам — уют, козерогам — кабинет. Люди отмечают друзей своего знака — это и есть механика охвата.",p:"Dream house designed for a zodiac sign personality, exaggerated character details in architecture and interior, cozy cinematic lighting, series-consistent style, vertical 9:16"},
+    {t:"Цифровой дублёр-риелтор",d:"Аватар (HeyGen/Synthesia) читает 30-секундную сводку рынка каждое утро, пока живая команда спит. Подпись честная: «это нейро-Я. живой я — на показах». Ежедневная рубрика без съёмок.",p:"Create a digital avatar presenter from one recorded video: daily 30-second real estate market news, consistent studio background with brand colors, natural russian speech"}
+  ];
+
   var PSY = [
     {n:"Приём 01",h:"Продавайте следующий шаг, а не квартиру",p:"Никто не покупает квартиру из ролика. Из ролика покупают шаг: сохранить чек-лист, написать «хочу разбор», прийти на просмотр.",d:"В виральных роликах CTA — только микрошаг. «Купите» оставьте менеджеру."},
     {n:"Приём 02",h:"Будьте на стороне зрителя, не рынка",p:"Человек ждёт подвоха от всех, кто продаёт метры. Тот, кто вскрывает уловки рынка, автоматически выходит из категории «продавцов» в категорию «своих».",d:"Раз в неделю публично отговаривайте от плохой покупки. Это лучшая реклама из возможных."},
@@ -670,7 +751,7 @@
   var tabs=Array.prototype.slice.call(document.querySelectorAll(".tab"));
   function showTab(name){
     tabs.forEach(function(t){t.setAttribute("aria-selected",String(t.dataset.tab===name))});
-    ["rubrics","ideas","hooks","psy","system"].forEach(function(s){
+    ["rubrics","ideas","hooks","psy","system","fresh","neuro"].forEach(function(s){
       $("sec-"+s).hidden=(s!==name);
     });
     window.scrollTo({top:0});
@@ -809,6 +890,47 @@
   function rnd(a){return a[Math.floor(Math.random()*a.length)]}
   $("genBtn").addEventListener("click",function(){
     $("genOut").textContent=rnd(GEN.a)+" "+rnd(GEN.b)+". "+rnd(GEN.c);
+  });
+
+  /* ---------- свежее ---------- */
+  var fl=$("freshList");
+  FRESH.forEach(function(drop,di){
+    var head=el("div","fdate mono","Поставка "+drop.date+(di===0?' <span class="fnew">новое</span>':""));
+    fl.appendChild(head);
+    drop.items.forEach(function(it){
+      var card=el("article","idea");
+      var body=el("div","idea-body");
+      body.appendChild(el("h3","it",it.t));
+      body.appendChild(el("p","id",it.d));
+      card.appendChild(body);
+      fl.appendChild(card);
+    });
+  });
+
+  /* ---------- нейро ---------- */
+  var ng=$("neuroGrid");
+  NEURO.forEach(function(n,i){
+    var c=el("article","pcard");
+    c.appendChild(el("span","pn mono","Нейро "+(i<9?"0":"")+(i+1)));
+    c.appendChild(el("h3",null,n.t));
+    c.appendChild(el("p",null,n.d));
+    var pr=el("div","prompt mono",'<span class="plabel">Заготовка промпта</span>'+n.p);
+    c.appendChild(pr);
+    var cb=el("button","copybtn mono ntool","⧉ Копировать промпт");
+    cb.type="button";
+    cb.addEventListener("click",function(){
+      var ok=function(){cb.textContent="✓ Скопировано";setTimeout(function(){cb.textContent="⧉ Копировать промпт"},1600)};
+      if(navigator.clipboard&&navigator.clipboard.writeText){
+        navigator.clipboard.writeText(n.p).then(ok,function(){})
+      }else{
+        var ta=document.createElement("textarea");ta.value=n.p;
+        document.body.appendChild(ta);ta.select();
+        try{document.execCommand("copy");ok()}catch(e){}
+        document.body.removeChild(ta);
+      }
+    });
+    c.appendChild(cb);
+    ng.appendChild(c);
   });
 
   /* ---------- психология ---------- */
