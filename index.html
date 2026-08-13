@@ -257,6 +257,34 @@
   }
 
   /* ---------- PROMPTS ---------- */
+  .anatomy{
+    border:1px solid var(--line);border-left:3px solid var(--accent);
+    background:var(--surface);border-radius:0 4px 4px 0;
+    padding:20px 22px;margin-bottom:28px;
+  }
+  .anatomy h3{
+    margin:0 0 14px;font-size:.92rem;font-weight:700;letter-spacing:-.01em;
+  }
+  .anatomy ol{
+    margin:0;padding:0;list-style:none;
+    display:grid;gap:6px 22px;
+    grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+    counter-reset:anat;
+  }
+  .anatomy li{
+    font-family:var(--f-mono);font-size:.68rem;line-height:1.5;color:var(--ink-faint);
+    counter-increment:anat;display:flex;gap:8px;
+  }
+  .anatomy li::before{
+    content:counter(anat,decimal-leading-zero);
+    color:var(--accent);flex:0 0 auto;font-variant-numeric:tabular-nums;
+  }
+  .anatomy li b{color:var(--ink);font-weight:600}
+  .anatomy p{
+    margin:14px 0 0;padding-top:12px;border-top:1px solid var(--line-soft);
+    font-size:.86rem;color:var(--ink-soft);
+  }
+
   .tools{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:24px;align-items:center}
   .search{
     flex:1 1 240px;padding:11px 14px;border:1px solid var(--line);border-radius:3px;
@@ -453,7 +481,24 @@
     <p class="eyebrow">Промпты</p>
     <h2>Банк готовых промптов</h2>
   </div>
-  <p class="sec-lede">Двенадцать механик — двенадцать промптов, по одному эталону на каждую. Никакого выбора из похожих вариантов: берёте промпт своей механики, подставляете свой предмет и генерируете. Каждую ночь один из эталонов дорабатывается — уточняется оптика, свет, движение камеры, запреты на артефакты, — и номер версии на карточке растёт. Меняется только каркас; вариативность даёт подстановка, а не количество промптов.</p>
+  <p class="sec-lede">Двенадцать механик — двенадцать промптов, по одному эталону на каждую. Никакого выбора из похожих вариантов: берёте промпт своей механики, подставляете свой предмет и генерируете. Каждую ночь два эталона дорабатываются — уточняется оптика, свет, движение камеры, физика и запреты на артефакты, — и номер версии на карточке растёт. Меняется только каркас; вариативность даёт подстановка, а не количество промптов.</p>
+  <div class="anatomy">
+    <h3>Из чего собран каждый промпт — порядок важен, модель читает слева направо</h3>
+    <ol>
+      <li><b>Кадр и оптика</b> — крупность, фокусное, камера</li>
+      <li><b>Движение камеры</b> — отдельно от движения объекта</li>
+      <li><b>Субъект и одно действие</b> — только одно, иначе каша</li>
+      <li><b>Среда и материалы</b> — из чего сделан мир вокруг</li>
+      <li><b>Свет</b> — источник, направление, температура</li>
+      <li><b>Физика</b> — натяжение, инерция, тени, отражения</li>
+      <li><b>Плёнка и затвор</b> — 24 кадра, 180°, грейд</li>
+      <li><b>Композиция под 9:16</b> — где объект, где пусто под интерфейс</li>
+      <li><b>Аудио</b> — что слышно, и «без музыки»</li>
+      <li><b>Запреты</b> — no cuts, no text, no watermark</li>
+    </ol>
+    <p>Меняя промпт под себя, заменяйте содержимое блока — не выбрасывайте сам блок. Чаще всего ролик разваливается там, где убрали физику или смешали движение камеры с движением объекта.</p>
+  </div>
+
   <div class="tools">
     <input class="search" id="pSearch" type="search" placeholder="поиск по промптам…" aria-label="Поиск по промптам">
     <div id="pFilters" style="display:flex;gap:6px;flex-wrap:wrap"></div>
@@ -532,65 +577,65 @@
      в note пишется, что именно усилили. Новая версия заменяет старую,
      только если она действительно точнее. */
   var PROMPTS=[
-    {g:"петля",t:"Кофе, которое льётся вечно",v:1,upd:"13.08.2026",swap:"напиток и посуду",
-     d:"Замкнутый круг: кофе переливается через край, стекает со стола и поднимается обратно в кофейник. Первый и последний кадр совпадают — зритель пересматривает и не замечает стыка.",
-     note:"Базовая версия: заданы объектив, свет, текстура пены и прямой запрет на склейки.",
-     p:"Macro shot, 50mm lens, locked-off camera. Dark roast coffee pours in a continuous stream from a copper pot into an overflowing white ceramic cup; the spilled coffee flows off the table edge and rises back up into the pot, completing a closed circuit. Soft warm window light from the left, steam catching the backlight, shallow depth of field, visible crema texture and micro-bubbles. Photorealistic, shot on 35mm film, subtle grain. First and last frame identical for a seamless loop. No cuts, no text, no watermark. Vertical 9:16"},
+    {g:"петля",t:"Кофе, которое льётся вечно",v:2,upd:"14.08.2026",swap:"напиток и посуду",
+     d:"Замкнутый круг: кофе переливается через край, стекает со стола и поднимается обратно в носик. Первый и последний кадр совпадают — зритель пересматривает и не замечает стыка.",
+     note:"Добавлены камера и оптика, затвор 180°, плёночный грейд, поведение пены и явное требование совпадения первого и последнего кадра.",
+     p:"Locked-off macro, 50mm Cooke S4 on ARRI Alexa 35, no camera movement. A stream of dark roast coffee pours from a copper pot into an overflowing white ceramic cup, the spill running off the table edge and rising back up into the spout in one closed circuit. Worn oak table, soft warm window light from camera left, steam catching the backlight. Correct fluid physics: surface tension holding at the rim, crema breaking into micro-bubbles, no splashing. 24fps, 180-degree shutter, Kodak Vision3 250D grade, fine grain, focus pinned to the pour line. Cup sits in the lower third with empty space above. The final frame matches the opening frame exactly. Audio: steady pour, faint ceramic ring, quiet room tone, no music. No cuts, no text, no watermark, no hands in frame. Vertical 9:16"},
 
-    {g:"масштаб",t:"Гигант на городской площади",v:1,upd:"13.08.2026",swap:"предмет-гигант",
+    {g:"масштаб",t:"Гигант на городской площади",v:2,upd:"14.08.2026",swap:"предмет-гигант",
      d:"Обычная вещь размером с пятиэтажку посреди настоящей площади. Люди рядом работают линейкой — без них мозг не считывает масштаб.",
-     note:"Базовая версия: добавлены объекты-линейки, контактные тени, отражения в лужах и дымка на верхней кромке.",
-     p:"Wide establishing shot, 24mm lens, slow push-in. A colossal everyday object — a single worn leather sneaker — stands in the middle of a real city square, five stories tall, resting on wet cobblestones. Ordinary pedestrians with umbrellas walk past its sole for scale, some stopping to look up. Overcast diffused daylight, realistic contact shadows and reflections in puddles, accurate atmospheric haze on the object's upper edge. Hyperrealistic documentary photography, natural color grade. No cuts, no text. Vertical 9:16"},
+     note:"Добавлены воздушная перспектива на верхней кромке, глубокая контактная тень и детализация швов в масштабе здания — три вещи, которые продают размер.",
+     p:"Wide establishing shot, 24mm anamorphic on ARRI Alexa 35, slow three-second push-in. A worn leather sneaker the size of a five-story building rests on wet cobblestones in a real European city square; the object itself never moves. Pedestrians with umbrellas walk past its sole, two of them stopping to look up. Overcast diffused daylight, no hard shadows. Physical accuracy sells the scale: a deep contact shadow under the sole, atmospheric haze desaturating the upper laces, water pooling against the rubber edge, stitching and scuffs rendered at true building scale. 24fps, 180-degree shutter, natural documentary grade, subtle anamorphic flare. Object fills the upper two thirds, people along the bottom edge. Audio: rain on stone, distant traffic, footsteps. No cuts, no text, no watermark. Vertical 9:16"},
 
-    {g:"морфинг",t:"Непрерывное превращение",v:1,upd:"13.08.2026",swap:"начальное и конечное существо",
+    {g:"морфинг",t:"Непрерывное превращение",v:2,upd:"14.08.2026",swap:"начальное и конечное существо",
      d:"Одно становится другим в одном кадре без склейки и без растворения. Держит до финальной формы — оторваться невозможно.",
-     note:"Базовая версия: превращение разложено по стадиям (шерсть, череп, зрачки) и запрещён кросс-фейд.",
-     p:"Single continuous take, 85mm lens, slow orbit. A house cat sitting on a windowsill morphs seamlessly into a full-grown tiger: fur lengthening strand by strand, stripes bleeding into place, skull and shoulders broadening, pupils dilating — all in one unbroken transformation with no cut and no dissolve. Soft overcast daylight from the window, dust in the air, individual whiskers and hair detail preserved throughout. Photorealistic wildlife cinematography, shallow depth of field. No cuts, no text. Vertical 9:16"},
+     note:"Зафиксирован взгляд в камеру через всё превращение и добавлено требование анатомической корректности на каждой промежуточной стадии.",
+     p:"Single continuous take, 85mm on ARRI Alexa 35, slow 180-degree orbit around the subject. A house cat sitting on a windowsill transforms into a full-grown tiger with no cut and no dissolve: guard hairs lengthening, stripes surfacing through the fur, skull broadening, shoulder blades rising, pupils widening — the eyeline stays locked to camera through the entire change. Overcast daylight through dirty glass, dust suspended in the beam. Anatomy remains correct at every intermediate stage, skin sliding over muscle, whiskers keeping individual definition. 24fps, 180-degree shutter, natural wildlife grade, depth of field falling off behind the ears. Subject centered in the lower two thirds. Audio: low breathing dropping in pitch, wind against the window. No cut, no dissolve, no text, no watermark. Vertical 9:16"},
 
-    {g:"разрез",t:"Разрез невозможного",v:1,upd:"13.08.2026",swap:"разрезаемый предмет",
+    {g:"разрез",t:"Разрез невозможного",v:2,upd:"14.08.2026",swap:"разрезаемый предмет",
      d:"Нож проходит сквозь то, что резаться не должно. Половину работы делает звук — без хруста эффект пропадает.",
-     note:"Базовая версия: добавлены каустики, зеркальная плоскость среза, 240 кадров в секунду и звуковая подсказка.",
-     p:"Extreme macro, 100mm probe lens, locked camera at table level. A razor-sharp chef's knife descends slowly through a red apple that turns out to be solid crystal glass inside; the blade parts it without resistance, revealing a mirror-clean cross-section that refracts light into thin rainbow bands. Crisp cutting sound. Single hard key light from the upper right on a matte black table, glass caustics on the surface. Ultra slow motion 240fps, photorealistic, razor-sharp focus on the cut line. No text, no watermark. Vertical 9:16"},
+     note:"Нож входит сверху кадра без рук — снят главный источник артефактов; добавлены преломление лезвия за стеклом и движущиеся каустики.",
+     p:"Extreme macro, 100mm probe lens on RED Komodo, locked at table level. A chef's knife enters from the top of frame with no hands visible and descends through a red apple in one unbroken motion; the interior is solid optical glass and parts without resistance, leaving a mirror-flat cross-section that throws thin rainbow caustics across the table. Single hard key light from upper right, matte black surface, everything else falling into shadow. Physical accuracy: refraction bending the blade where it passes behind the glass, caustics sliding as the halves separate, a hairline chip at the entry point. 120fps slow motion, deep blacks, high-contrast product grade, focus held on the cut line. Apple centered with generous headroom. Audio: one crisp glass crack, then a low ring, no music. No hands, no cuts, no text, no watermark. Vertical 9:16"},
 
-    {g:"характер",t:"Оживший предмет",v:1,upd:"13.08.2026",swap:"предмет и его эмоцию",
+    {g:"характер",t:"Оживший предмет",v:2,upd:"14.08.2026",swap:"предмет и его эмоцию",
      d:"У вещи появляется одна понятная эмоция — не сюжет, а характер. Самый широкий охват: заходит всем возрастам.",
-     note:"Базовая версия: мимика собрана из собственных деталей предмета, запрещены мультяшные пропорции.",
-     p:"Medium close-up, 50mm lens, static tripod. An old dented kettle on a gas stove has a subtly expressive face formed by its own metal — the spout curling into a frown, the lid tilting like a raised eyebrow — grumbling as it heats. Steam puffs match its mood, sharper when annoyed. Warm morning kitchen light, tiled wall out of focus behind. Believable animation grafted onto a fully photorealistic object, no cartoon proportions, real metal reflections and worn enamel. No text. Vertical 9:16"},
+     note:"Прямо запрещены нарисованные глаза: мимика собирается только из собственных деталей предмета, отражения искажаются при движении металла.",
+     p:"Medium close-up, 50mm on ARRI Alexa 35, static tripod, no camera movement. A dented enamel kettle on a gas stove grumbles as it heats: the spout curling into a frown, the lid tilting like a raised eyebrow, the whole expression formed from its own metal — no drawn eyes, no added mouth, no cartoon proportions. Steam puffs harder on each grumble. Warm tungsten kitchen light, tiled wall thrown out of focus behind, blue gas flame underneath. Real material response: reflections distorting as the metal flexes, chipped enamel, condensation beading on the cold handle. 24fps, 180-degree shutter, warm domestic grade. Kettle in the lower two thirds. Audio: low metallic grumble, gas hiss, water starting to boil. No cuts, no text, no watermark. Vertical 9:16"},
 
-    {g:"точка съёмки",t:"POV изнутри",v:1,upd:"13.08.2026",swap:"объект, внутрь которого летим",
+    {g:"точка съёмки",t:"POV изнутри",v:2,upd:"14.08.2026",swap:"объект, внутрь которого летим",
      d:"Камера там, где человека быть не может. За восемь секунд она должна пройти путь, а не повисеть на месте.",
-     note:"Базовая версия: задана траектория сквозь две среды и дисперсия света по краям кадра.",
-     p:"First person POV, ultra-wide 12mm lens, continuous forward flight. The camera travels inside a single falling water droplet, the world outside visible through the curved refracting surface — inverted, stretched, shimmering. It passes through the droplet's inner surface into open air, then into a second droplet. Ultra slow motion, backlit by low sun, prismatic dispersion at the edges. Macro cinematography, photorealistic, no visible camera housing. No cuts, no text. Vertical 9:16"},
+     note:"Прописана настоящая оптика капли: изображение переворачивается, хроматическая кайма усиливается к краю, поверхность дрожит от натяжения в полёте.",
+     p:"First-person POV, 12mm ultra-wide, continuous forward flight with no cuts. The camera travels inside a single falling water droplet: the world beyond the curved surface appears inverted and stretched, its edges smeared with prismatic dispersion. It exits through the trailing surface into open air, then enters a second droplet falling alongside. Low backlit sun against a dark background so the refraction reads clearly. Correct optics: the image flips through the lens of the droplet, chromatic fringing intensifying toward the rim, surface tension wobbling as the drop deforms in flight. 120fps slow motion, macro cinematography, clean highlights with no blowout. Horizon held near the centre line. Audio: muffled low rumble inside the water, a soft pop at each surface crossing. No camera housing visible, no cuts, no text. Vertical 9:16"},
 
-    {g:"слом",t:"Твист на третьей секунде",v:1,upd:"13.08.2026",swap:"бытовое действие",
+    {g:"слом",t:"Твист на третьей секунде",v:2,upd:"14.08.2026",swap:"бытовое действие",
      d:"Предельно обычный кадр, который ломается ровно на третьей секунде. Спокойная реакция героя усиливает эффект вдвое.",
-     note:"Базовая версия: слом привязан к третьей секунде, добавлена физика жидкости и невозмутимость героя.",
-     p:"Static medium shot, 35mm lens, handheld micro-movement. An ordinary kitchen at breakfast: a person pours coffee from a French press. Three seconds in, the stream reverses — coffee flows upward out of the cup toward the ceiling and pools there like liquid on an inverted floor. The person keeps pouring, calm, unbothered. Natural morning light, realistic fluid simulation with correct surface tension and droplet separation. Photorealistic, handheld documentary feel. No cuts, no text. Vertical 9:16"},
+     note:"Кадрирование от груди убирает лицо — крупнейший источник артефактов; физика жидкости осталась корректной при обратном направлении.",
+     p:"Static medium shot, 35mm on ARRI Alexa 35, faint handheld drift. An ordinary kitchen at breakfast: a person in a plain t-shirt pours coffee from a French press, framed from the chest down so the face stays out of shot. At exactly three seconds the stream reverses — coffee climbing upward out of the cup and pooling across the ceiling like liquid on an inverted floor — while the pour continues, unhurried and unbothered. Natural window light, ordinary domestic clutter on the counter. The fluid simulation stays physically correct in the wrong direction: surface tension, droplet separation, a spreading pool with a rippling edge. 24fps, 180-degree shutter, neutral documentary grade. Cup centered, ceiling visible in the top third. Audio: pouring, one ceramic clink, no music. No face, no cuts, no text. Vertical 9:16"},
 
-    {g:"время",t:"Машина времени",v:1,upd:"13.08.2026",swap:"место и эпохи",
+    {g:"время",t:"Машина времени",v:2,upd:"14.08.2026",swap:"место и эпохи",
      d:"Одна точка проходит через века. Камера не двигается — меняется только время, и это главное условие.",
-     note:"Базовая версия: добавлена сквозная деталь (дерево), которая живёт через все эпохи и связывает кадр.",
-     p:"Locked-off wide shot, 28mm lens, camera never moves. The same street corner transforms continuously through 1900, 1955, 2005 and 2095: cobblestones become asphalt then smart pavement, horse carts become cars become silent hovering transport, facades gain and lose signage, while one surviving tree thickens across the whole span. Seamless morphing timelapse with no hard cuts. Light shifts from gaslight amber to neon to cool white. Photorealistic, cinematic color grade. No text. Vertical 9:16"},
+     note:"Добавлены смена характера света по эпохам и требование достоверных материалов, силуэтов одежды и пропорций транспорта на каждой стадии.",
+     p:"Locked-off wide, 28mm on ARRI Alexa 35, the camera never moves a millimetre. The same street corner morphs continuously through 1900, 1955, 2005 and 2095: cobblestones flowing into asphalt then into pale smart paving, horse carts becoming boxy cars becoming silent low-hovering transport, facades gaining and shedding signage and wiring, while one corner tree thickens and holds its exact position through every era. One unbroken morph, no hard cuts, no crossfades. Light shifts era by era from gaslight amber to sodium orange to cold LED white. Period-correct materials, clothing silhouettes and vehicle proportions at every stage. 24fps, 180-degree shutter, cinematic grade with era-appropriate contrast. Building line across the upper two thirds. Audio: hooves giving way to engines giving way to near-silence. No text, no watermark. Vertical 9:16"},
 
-    {g:"существо",t:"Существо, которого нет",v:1,upd:"13.08.2026",swap:"животное и его аномалию",
+    {g:"существо",t:"Существо, которого нет",v:2,upd:"14.08.2026",swap:"животное и его аномалию",
      d:"Выдуманное животное, снятое с полной серьёзностью документалки. Серьёзность подачи и есть приём.",
-     note:"Базовая версия: задан телевик, естественное поведение животного и запрет на фэнтезийное свечение.",
-     p:"Nature documentary cinematography, 400mm telephoto, slow handheld follow. A fox with translucent iridescent butterfly wings moves through morning forest undergrowth, wings folding against its back as it steps, catching backlight and scattering color. Shot as genuine wildlife footage: shallow depth of field, real fur and wing membrane detail, natural animal behavior — sniffing, pausing, ears tracking sound. Golden dawn light through mist, no fantasy styling, no glow effects. Photorealistic. No text. Vertical 9:16"},
+     note:"Добавлены операторские несовершенства — дрожь с рук, промах автофокуса, листья перед объективом: именно они читаются как настоящая съёмка.",
+     p:"Nature documentary cinematography, 400mm telephoto on ARRI Alexa 35, slow handheld follow with real operator micro-shake. A red fox with translucent iridescent butterfly wings picks its way through morning forest undergrowth; the wings fold flat against its back as it steps and catch the backlight, scattering colour across its fur. Filmed exactly like genuine wildlife footage: shallow depth of field, focus hunting slightly before settling, foreground leaves crossing the lens. Real animal behaviour — sniffing the ground, pausing, ears tracking a sound off-frame. Golden dawn light through mist, no fantasy glow, no sparkle, no stylisation. Wing membrane shows veining and sub-surface scattering. 24fps, 180-degree shutter, natural documentary grade. Fox in the lower third. Audio: birdsong, dry leaves, a faint wing rustle. No text, no watermark. Vertical 9:16"},
 
-    {g:"миниатюра",t:"Миниатюрный мир",v:1,upd:"13.08.2026",swap:"локацию сверху",
+    {g:"миниатюра",t:"Миниатюрный мир",v:2,upd:"14.08.2026",swap:"локацию сверху",
      d:"Реальное место выглядит игрушечным макетом. Без сильного размытия сверху и снизу эффект не читается.",
-     note:"Базовая версия: задан угол съёмки, резкая полоса по центру и слегка ускоренный ритм движения.",
-     p:"High aerial view looking down at 60 degrees, tilt-shift lens. A real city intersection at rush hour rendered so it reads as a handmade toy model: strong optical blur across the top and bottom thirds, a razor-sharp band through the center, exaggerated color saturation, cars moving in slightly accelerated stop-motion cadence. Bright midday sun, hard tiny shadows. Photorealistic tilt-shift miniature effect, medium format look. No text. Vertical 9:16"},
+     note:"Добавлено ключевое условие миниатюры — отсутствие воздушной дымки и жёсткие крошечные тени; движение слегка ступенчатое, но не дёрганое.",
+     p:"High aerial looking down at 60 degrees, tilt-shift lens on a medium-format body, locked off. A real city intersection at rush hour reads as a handmade toy model: a razor-sharp band of focus across the middle, heavy optical blur through the top and bottom thirds, colour saturation pushed past natural. Traffic moves in a slightly accelerated stepped cadence that suggests stop-motion without becoming jerky. Hard midday sun, tiny crisp shadows under every car, and no atmospheric haze at all — its absence is what makes the scale read as small. Pedestrians move as individual dots with correct crowd flow. 24fps with a mild speed ramp, high-contrast miniature grade. Intersection centered inside the sharp band. Audio: muted traffic, distant horns, no music. No text, no watermark. Vertical 9:16"},
 
-    {g:"абсурд",t:"Гиперреалистичный абсурд",v:1,upd:"13.08.2026",swap:"обычный предмет",
+    {g:"абсурд",t:"Гиперреалистичный абсурд",v:2,upd:"14.08.2026",swap:"обычный предмет",
      d:"Ерунда, снятая как реклама за миллион. Чем серьёзнее продакшн и чем дешевле предмет, тем сильнее эффект.",
-     note:"Базовая версия: добавлен премиальный свет, вращение на бархате и прямой запрет на комедийную подачу.",
-     p:"Luxury commercial cinematography, 100mm macro, slow rotating dolly. A single ordinary boiled dumpling presented as a priceless jewel: resting on black velvet under a glass dome, rotating slowly, lit by one dramatic rim light and a soft top fill. Condensation beads catching light, steam drifting through the beam. The absolute seriousness of a high-end jewelry advertisement — no wink, no comedic framing. Ultra premium color grade, deep blacks, photorealistic. No text. Vertical 9:16"},
+     note:"Добавлен прямой запрет на любые сигналы шутки в кадре — весь эффект держится на том, что подача остаётся абсолютно серьёзной.",
+     p:"Luxury commercial cinematography, 100mm macro on ARRI Alexa 35, slow rotating dolly around the subject. A single boiled dumpling presented as a priceless jewel: resting on black velvet beneath a glass dome, turning slowly on a hidden motorised base. One dramatic rim light rakes across it, a soft top fill lifts the shadows, everything else falls to black. Condensation beads catch the rim light, steam drifts through the beam, the dough shows real texture and a faint sheen. Played with the absolute seriousness of a high-end jewellery advertisement — no wink, no comedic framing, no props that signal a joke. 24fps, 180-degree shutter, ultra-premium grade, deep blacks, no clipped highlights. Subject centered. Audio: low cinematic drone, faint velvet rustle. No text, no watermark. Vertical 9:16"},
 
-    {g:"стихия",t:"Погодное чудо",v:1,upd:"13.08.2026",swap:"стихию и помещение",
+    {g:"стихия",t:"Погодное чудо",v:2,upd:"14.08.2026",swap:"стихию и помещение",
      d:"Невозможная погода в подчёркнуто обычном помещении. Контраст держится на бытовых деталях вокруг.",
-     note:"Базовая версия: прописаны накопление снега на поверхностях и столкновение холодного и тёплого света.",
-     p:"Medium wide shot, 35mm lens, slow push-in. Heavy snow falls inside an ordinary living room — flakes drifting past a lit floor lamp, settling on the sofa cushions, the coffee table and a half-read book. A person sits reading, unbothered, breath faintly visible. The room is emphatically normal: radiator, houseplant, family photos. Cold blue window light against the warm lamp interior, realistic snow accumulation, shallow depth of field. Photorealistic. No cuts, no text. Vertical 9:16"}
+     note:"Добавлено столкновение холодного оконного и тёплого лампового света и неравномерное накопление снега — без этого кадр читается как рендер.",
+     p:"Medium wide, 35mm on ARRI Alexa 35, slow four-second push-in. Heavy snow falls inside an ordinary living room: flakes drifting past a lit floor lamp, settling on the sofa cushions, the coffee table and a half-read book left face down. A person sits reading, unbothered, breath faintly visible, framed from the shoulders down. The room is emphatically normal — radiator, houseplant, family photographs, a remote on the armrest. Cold blue window light meets warm tungsten lamplight across the middle of the room. Snow accumulates unevenly, deeper along horizontal surfaces, individual flakes holding focus as they cross the lens. 24fps, 180-degree shutter, naturalistic grade. Lamp in the upper third. Audio: muffled hush, a page turning, no music. No face, no cuts, no text. Vertical 9:16"}
   ];
 
   var SUBJECTS=["кот","старый чайник","городская площадь","подъезд панельки","чашка кофе","кроссовки","лифт","окно кухни","автобусная остановка","дерево во дворе","зеркало в ванной","детская площадка","мост через реку","библиотека","пустой стадион","заброшенный завод","парк осенью","рынок","метро в час пик","маяк"];
