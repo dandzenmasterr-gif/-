@@ -276,9 +276,23 @@
     background:var(--surface);border:1px solid var(--line);border-radius:4px;
     padding:18px;display:flex;flex-direction:column;gap:10px;
   }
+  .pcard-head{display:flex;justify-content:space-between;align-items:center;gap:10px}
   .pcard .tag{
     font-family:var(--f-mono);font-size:.58rem;letter-spacing:.14em;
     text-transform:uppercase;color:var(--accent);
+  }
+  .pcard .ver{
+    font-family:var(--f-mono);font-size:.58rem;letter-spacing:.08em;
+    color:var(--live);border:1px solid var(--live);border-radius:2px;
+    padding:2px 7px;white-space:nowrap;font-variant-numeric:tabular-nums;
+  }
+  .pcard .swap{
+    margin:0;font-family:var(--f-mono);font-size:.64rem;
+    color:var(--ink-faint);letter-spacing:.02em;
+  }
+  .pcard .note{
+    margin:0;padding-top:10px;border-top:1px solid var(--line-soft);
+    font-family:var(--f-mono);font-size:.62rem;line-height:1.5;color:var(--ink-faint);
   }
   .pcard h3{font-size:1.02rem;font-weight:700;letter-spacing:-.01em;margin:0;line-height:1.2}
   .pcard p{margin:0;font-size:.86rem;color:var(--ink-soft);line-height:1.5}
@@ -439,7 +453,7 @@
     <p class="eyebrow">Промпты</p>
     <h2>Банк готовых промптов</h2>
   </div>
-  <p class="sec-lede">Скопировали — вставили в Veo, Sora, Kling или Runway — получили ролик. Генерируйте на английском: модели понимают его точнее. Меняйте предмет и город на свои, каркас промпта оставляйте как есть.</p>
+  <p class="sec-lede">Двенадцать механик — двенадцать промптов, по одному эталону на каждую. Никакого выбора из похожих вариантов: берёте промпт своей механики, подставляете свой предмет и генерируете. Каждую ночь один из эталонов дорабатывается — уточняется оптика, свет, движение камеры, запреты на артефакты, — и номер версии на карточке растёт. Меняется только каркас; вариативность даёт подстановка, а не количество промптов.</p>
   <div class="tools">
     <input class="search" id="pSearch" type="search" placeholder="поиск по промптам…" aria-label="Поиск по промптам">
     <div id="pFilters" style="display:flex;gap:6px;flex-wrap:wrap"></div>
@@ -513,64 +527,70 @@
     {m:"стихия",t:"Погодное чудо",d:"Невозможная погода в обычном месте: снегопад в комнате, гроза в стакане, туман в лифте.",x:"Тест: помещение должно быть подчёркнуто обычным — контраст и есть приём."}
   ];
 
+  /* ЭТАЛОННЫЕ ПРОМПТЫ · по одному на механику.
+     Ночью каждый промпт дорабатывается: поднимается v, ставится дата upd,
+     в note пишется, что именно усилили. Новая версия заменяет старую,
+     только если она действительно точнее. */
   var PROMPTS=[
-    {g:"петля",t:"Кофе, которое льётся вечно",d:"Чашка переполняется, кофе стекает со стола обратно в кофейник и по кругу.",p:"Coffee endlessly pouring from a pot into an overflowing cup, the spill flowing back up into the pot in a perfect seamless loop, warm morning kitchen light, macro details, photorealistic, vertical 9:16"},
-    {g:"петля",t:"Лестница без конца",d:"Обычный подъезд, по которому человек поднимается и оказывается там же.",p:"A person climbing an ordinary apartment stairwell that impossibly loops back to the same landing, Escher geometry, cold fluorescent light, seamless loop, photorealistic, vertical 9:16"},
-    {g:"петля",t:"Поезд въезжает сам в себя",d:"Состав уходит в тоннель и выезжает из собственного хвоста.",p:"A train entering a tunnel and emerging from its own last carriage, forming an endless moving ring, aerial view, misty morning, seamless loop, cinematic, vertical 9:16"},
-    {g:"петля",t:"Волна, которая не падает",d:"Океанская волна замирает в верхней точке и сворачивается обратно.",p:"A giant ocean wave curling forever without ever breaking, water rolling back into itself, golden hour backlight, slow motion, seamless loop, photorealistic, vertical 9:16"},
+    {g:"петля",t:"Кофе, которое льётся вечно",v:1,upd:"13.08.2026",swap:"напиток и посуду",
+     d:"Замкнутый круг: кофе переливается через край, стекает со стола и поднимается обратно в кофейник. Первый и последний кадр совпадают — зритель пересматривает и не замечает стыка.",
+     note:"Базовая версия: заданы объектив, свет, текстура пены и прямой запрет на склейки.",
+     p:"Macro shot, 50mm lens, locked-off camera. Dark roast coffee pours in a continuous stream from a copper pot into an overflowing white ceramic cup; the spilled coffee flows off the table edge and rises back up into the pot, completing a closed circuit. Soft warm window light from the left, steam catching the backlight, shallow depth of field, visible crema texture and micro-bubbles. Photorealistic, shot on 35mm film, subtle grain. First and last frame identical for a seamless loop. No cuts, no text, no watermark. Vertical 9:16"},
 
-    {g:"масштаб",t:"Кроссовок размером с дом",d:"Гигантская кроссовка стоит на городской площади, вокруг ходят люди.",p:"A giant sneaker the size of a building standing in a city square, tiny people walking around it for scale, overcast daylight, hyperrealistic, vertical 9:16"},
-    {g:"масштаб",t:"Город в аквариуме",d:"Целый мегаполис живёт внутри аквариума на столе.",p:"A tiny living city inside a glass aquarium on a desk, cars moving, windows lit, fish swimming above the skyscrapers, macro photography, shallow depth of field, vertical 9:16"},
-    {g:"масштаб",t:"Кот выше многоэтажки",d:"Огромный кот спокойно лежит на набережной среди домов.",p:"A colossal domestic cat calmly lying along a city embankment, taller than the surrounding apartment buildings, people watching from below, overcast light, photorealistic, vertical 9:16"},
-    {g:"масштаб",t:"Человек на ладони",d:"Гигантская рука держит крошечного человека, который идёт по ней.",p:"A giant human hand holding a tiny person walking across the palm, realistic skin texture, dramatic side light, dark background, macro scale contrast, vertical 9:16"},
-    {g:"масштаб",t:"Луна за окном",d:"Луна занимает всё окно обычной кухни.",p:"An enormous moon filling the entire window of an ordinary kitchen, its craters visible in detail, dim interior, cinematic contrast, photorealistic, vertical 9:16"},
+    {g:"масштаб",t:"Гигант на городской площади",v:1,upd:"13.08.2026",swap:"предмет-гигант",
+     d:"Обычная вещь размером с пятиэтажку посреди настоящей площади. Люди рядом работают линейкой — без них мозг не считывает масштаб.",
+     note:"Базовая версия: добавлены объекты-линейки, контактные тени, отражения в лужах и дымка на верхней кромке.",
+     p:"Wide establishing shot, 24mm lens, slow push-in. A colossal everyday object — a single worn leather sneaker — stands in the middle of a real city square, five stories tall, resting on wet cobblestones. Ordinary pedestrians with umbrellas walk past its sole for scale, some stopping to look up. Overcast diffused daylight, realistic contact shadows and reflections in puddles, accurate atmospheric haze on the object's upper edge. Hyperrealistic documentary photography, natural color grade. No cuts, no text. Vertical 9:16"},
 
-    {g:"морфинг",t:"Кот становится тигром",d:"Домашний кот на подоконнике плавно превращается в тигра.",p:"A house cat on a windowsill slowly morphing into a full-size tiger, fur pattern and muscles transforming continuously, no cuts, natural daylight, photorealistic, vertical 9:16"},
-    {g:"морфинг",t:"Город прорастает лесом",d:"Мегаполис плавно зарастает деревьями и превращается в лес.",p:"A dense city skyline continuously morphing into an ancient forest, buildings turning into trees, roads into rivers, seamless transformation, aerial view, cinematic, vertical 9:16"},
-    {g:"морфинг",t:"Лицо через сто лет",d:"Молодое лицо плавно стареет до глубокой старости за восемь секунд.",p:"A young face aging continuously from twenty to ninety years old in one unbroken shot, skin and hair transforming smoothly, neutral studio light, photorealistic portrait, vertical 9:16"},
-    {g:"морфинг",t:"Из чертежа в дом",d:"Синие линии чертежа поднимаются с бумаги и становятся домом.",p:"Blue blueprint lines lifting off paper and rising into a glowing three-dimensional building that fills with real materials, holographic to photoreal transition, dark background, vertical 9:16"},
+    {g:"морфинг",t:"Непрерывное превращение",v:1,upd:"13.08.2026",swap:"начальное и конечное существо",
+     d:"Одно становится другим в одном кадре без склейки и без растворения. Держит до финальной формы — оторваться невозможно.",
+     note:"Базовая версия: превращение разложено по стадиям (шерсть, череп, зрачки) и запрещён кросс-фейд.",
+     p:"Single continuous take, 85mm lens, slow orbit. A house cat sitting on a windowsill morphs seamlessly into a full-grown tiger: fur lengthening strand by strand, stripes bleeding into place, skull and shoulders broadening, pupils dilating — all in one unbroken transformation with no cut and no dissolve. Soft overcast daylight from the window, dust in the air, individual whiskers and hair detail preserved throughout. Photorealistic wildlife cinematography, shallow depth of field. No cuts, no text. Vertical 9:16"},
 
-    {g:"разрез",t:"Стеклянный фрукт",d:"Нож разрезает яблоко, которое внутри оказывается стеклянным.",p:"A knife slowly slicing through an apple that turns out to be solid glass inside, crystal cross-section catching light, crisp cutting sound, macro, photorealistic, vertical 9:16"},
-    {g:"разрез",t:"Разрез планеты",d:"Гигантский нож разрезает Землю как торт.",p:"A giant knife slicing through planet Earth like a layered cake, revealing glowing molten core layers, space background, hyperrealistic scientific detail, vertical 9:16"},
-    {g:"разрез",t:"Металл как масло",d:"Нож проходит сквозь стальной шар без сопротивления.",p:"A kitchen knife effortlessly slicing a solid steel ball like soft butter, mirror-polished cut surface, studio light on dark table, ASMR macro detail, vertical 9:16"},
-    {g:"разрез",t:"Внутри — целый город",d:"Разрезанный камень оказывается наполнен крошечным городом.",p:"A stone being cut open to reveal a tiny glowing city living inside it, miniature buildings and lights, macro photography, dramatic lighting, photorealistic, vertical 9:16"},
+    {g:"разрез",t:"Разрез невозможного",v:1,upd:"13.08.2026",swap:"разрезаемый предмет",
+     d:"Нож проходит сквозь то, что резаться не должно. Половину работы делает звук — без хруста эффект пропадает.",
+     note:"Базовая версия: добавлены каустики, зеркальная плоскость среза, 240 кадров в секунду и звуковая подсказка.",
+     p:"Extreme macro, 100mm probe lens, locked camera at table level. A razor-sharp chef's knife descends slowly through a red apple that turns out to be solid crystal glass inside; the blade parts it without resistance, revealing a mirror-clean cross-section that refracts light into thin rainbow bands. Crisp cutting sound. Single hard key light from the upper right on a matte black table, glass caustics on the surface. Ultra slow motion 240fps, photorealistic, razor-sharp focus on the cut line. No text, no watermark. Vertical 9:16"},
 
-    {g:"характер",t:"Ворчливый чайник",d:"Чайник с человеческим лицом недовольно бурчит на плите.",p:"An old kettle with a subtle expressive human-like face grumbling on a stove, steam puffing with its mood, cozy kitchen, Pixar-quality realism, vertical 9:16"},
-    {g:"характер",t:"Дом просыпается",d:"Многоэтажка потягивается и зевает утром, окна как глаза.",p:"An apartment building waking up at dawn, stretching slightly, windows blinking like sleepy eyes, warm sunrise light, whimsical photorealism, vertical 9:16"},
-    {g:"характер",t:"Кроссовки сбегают",d:"Пара кроссовок тихо убегает из прихожей, пока никто не видит.",p:"A pair of sneakers quietly sneaking out of a hallway on their own, moving like a cautious animal, night, motion blur, photorealistic, vertical 9:16"},
-    {g:"характер",t:"Уставший лифт",d:"Лифт тяжело вздыхает, поднимая слишком много людей.",p:"An elevator sighing heavily under too many passengers, its doors and panels subtly expressing exhaustion, fluorescent light, humorous photorealism, vertical 9:16"},
+    {g:"характер",t:"Оживший предмет",v:1,upd:"13.08.2026",swap:"предмет и его эмоцию",
+     d:"У вещи появляется одна понятная эмоция — не сюжет, а характер. Самый широкий охват: заходит всем возрастам.",
+     note:"Базовая версия: мимика собрана из собственных деталей предмета, запрещены мультяшные пропорции.",
+     p:"Medium close-up, 50mm lens, static tripod. An old dented kettle on a gas stove has a subtly expressive face formed by its own metal — the spout curling into a frown, the lid tilting like a raised eyebrow — grumbling as it heats. Steam puffs match its mood, sharper when annoyed. Warm morning kitchen light, tiled wall out of focus behind. Believable animation grafted onto a fully photorealistic object, no cartoon proportions, real metal reflections and worn enamel. No text. Vertical 9:16"},
 
-    {g:"точка съёмки",t:"Внутри капли",d:"Камера летит внутри падающей капли воды.",p:"Camera traveling inside a single falling water droplet, refracted world visible through the surface, ultra slow motion, macro, photorealistic, vertical 9:16"},
-    {g:"точка съёмки",t:"В стволе гитары",d:"Полёт внутри акустической гитары во время игры.",p:"Camera flying inside an acoustic guitar body while it is being played, strings vibrating above, wood grain and dust, warm light through the sound hole, vertical 9:16"},
-    {g:"точка съёмки",t:"Глазами пчелы",d:"Полёт над цветочным полем глазами пчелы.",p:"Bee point of view flying low over a blooming field, fast erratic motion, ultra wide compound-eye distortion, sunlight, photorealistic, vertical 9:16"},
-    {g:"точка съёмки",t:"Между страниц",d:"Камера проходит между страницами открывающейся книги.",p:"Camera gliding between the pages of a giant opening book, paper towering like cliffs, dust particles in warm library light, cinematic, vertical 9:16"},
+    {g:"точка съёмки",t:"POV изнутри",v:1,upd:"13.08.2026",swap:"объект, внутрь которого летим",
+     d:"Камера там, где человека быть не может. За восемь секунд она должна пройти путь, а не повисеть на месте.",
+     note:"Базовая версия: задана траектория сквозь две среды и дисперсия света по краям кадра.",
+     p:"First person POV, ultra-wide 12mm lens, continuous forward flight. The camera travels inside a single falling water droplet, the world outside visible through the curved refracting surface — inverted, stretched, shimmering. It passes through the droplet's inner surface into open air, then into a second droplet. Ultra slow motion, backlit by low sun, prismatic dispersion at the edges. Macro cinematography, photorealistic, no visible camera housing. No cuts, no text. Vertical 9:16"},
 
-    {g:"слом",t:"Обычное утро ломается",d:"Человек наливает кофе, и жидкость начинает литься вверх.",p:"A person pouring coffee in an ordinary kitchen when the liquid suddenly starts flowing upward to the ceiling, calm reaction, natural morning light, photorealistic, vertical 9:16"},
-    {g:"слом",t:"Отражение живёт своей жизнью",d:"Отражение в зеркале перестаёт повторять движения.",p:"A person looking in a bathroom mirror while their reflection stops copying them and moves independently, subtle unsettling delay, cold light, photorealistic, vertical 9:16"},
-    {g:"слом",t:"Гравитация выключилась",d:"В обычной комнате вещи начинают медленно всплывать.",p:"An ordinary living room where objects slowly begin floating upward as gravity fails, curtains rising, person calmly watching, natural light, photorealistic, vertical 9:16"},
-    {g:"слом",t:"Дождь идёт снизу вверх",d:"Улица под ливнем, который летит с земли в небо.",p:"A city street during heavy rain where every drop falls upward into the sky, pedestrians with inverted umbrellas, overcast light, photorealistic, vertical 9:16"},
+    {g:"слом",t:"Твист на третьей секунде",v:1,upd:"13.08.2026",swap:"бытовое действие",
+     d:"Предельно обычный кадр, который ломается ровно на третьей секунде. Спокойная реакция героя усиливает эффект вдвое.",
+     note:"Базовая версия: слом привязан к третьей секунде, добавлена физика жидкости и невозмутимость героя.",
+     p:"Static medium shot, 35mm lens, handheld micro-movement. An ordinary kitchen at breakfast: a person pours coffee from a French press. Three seconds in, the stream reverses — coffee flows upward out of the cup toward the ceiling and pools there like liquid on an inverted floor. The person keeps pouring, calm, unbothered. Natural morning light, realistic fluid simulation with correct surface tension and droplet separation. Photorealistic, handheld documentary feel. No cuts, no text. Vertical 9:16"},
 
-    {g:"время",t:"Улица через сто лет",d:"Один перекрёсток проходит через 1900, 1960, 2020 и 2120 годы.",p:"The same street corner transforming through 1900, 1960, 2020 and 2120, architecture and vehicles changing, camera locked in place, seamless timelapse, cinematic, vertical 9:16"},
-    {g:"время",t:"Комната взрослеет",d:"Детская превращается в подростковую, потом во взрослую спальню.",p:"A child's bedroom transforming continuously into a teenager's room and then an adult bedroom, furniture and posters morphing, fixed camera, warm light, vertical 9:16"},
-    {g:"время",t:"Дерево за минуту",d:"Дерево растёт от ростка до столетнего гиганта.",p:"A tree growing from a seedling into a hundred-year-old giant in one continuous shot, seasons cycling around it, fixed camera, cinematic timelapse, vertical 9:16"},
+    {g:"время",t:"Машина времени",v:1,upd:"13.08.2026",swap:"место и эпохи",
+     d:"Одна точка проходит через века. Камера не двигается — меняется только время, и это главное условие.",
+     note:"Базовая версия: добавлена сквозная деталь (дерево), которая живёт через все эпохи и связывает кадр.",
+     p:"Locked-off wide shot, 28mm lens, camera never moves. The same street corner transforms continuously through 1900, 1955, 2005 and 2095: cobblestones become asphalt then smart pavement, horse carts become cars become silent hovering transport, facades gain and lose signage, while one surviving tree thickens across the whole span. Seamless morphing timelapse with no hard cuts. Light shifts from gaslight amber to neon to cool white. Photorealistic, cinematic color grade. No text. Vertical 9:16"},
 
-    {g:"существо",t:"Кит в облаках",d:"Огромный кит плывёт между облаков над городом.",p:"A colossal whale swimming slowly through clouds above a city, birds circling it, golden hour, documentary realism, vertical 9:16"},
-    {g:"существо",t:"Лис с крыльями бабочки",d:"Документальные кадры лисицы с прозрачными крыльями.",p:"Nature documentary footage of a fox with translucent butterfly wings moving through a forest at dawn, BBC style cinematography, photorealistic, vertical 9:16"},
-    {g:"существо",t:"Каменный зверь",d:"Существо, сложенное из камней, просыпается в горах.",p:"A creature made of moss-covered boulders slowly waking up in a mountain valley, rocks shifting into limbs, overcast light, documentary realism, vertical 9:16"},
+    {g:"существо",t:"Существо, которого нет",v:1,upd:"13.08.2026",swap:"животное и его аномалию",
+     d:"Выдуманное животное, снятое с полной серьёзностью документалки. Серьёзность подачи и есть приём.",
+     note:"Базовая версия: задан телевик, естественное поведение животного и запрет на фэнтезийное свечение.",
+     p:"Nature documentary cinematography, 400mm telephoto, slow handheld follow. A fox with translucent iridescent butterfly wings moves through morning forest undergrowth, wings folding against its back as it steps, catching backlight and scattering color. Shot as genuine wildlife footage: shallow depth of field, real fur and wing membrane detail, natural animal behavior — sniffing, pausing, ears tracking sound. Golden dawn light through mist, no fantasy styling, no glow effects. Photorealistic. No text. Vertical 9:16"},
 
-    {g:"миниатюра",t:"Город-игрушка",d:"Мегаполис сверху выглядит как детский макет.",p:"Aerial view of a real city that looks like a miniature toy model, strong tilt-shift blur, tiny cars and people, bright daylight, photorealistic, vertical 9:16"},
-    {g:"миниатюра",t:"Пробка как железная дорога",d:"Автомобильная пробка похожа на детскую железную дорогу.",p:"A traffic jam filmed from above looking exactly like a toy train set, heavy tilt-shift effect, saturated colors, sunny day, vertical 9:16"},
-    {g:"миниатюра",t:"Стройка в песочнице",d:"Стройплощадка выглядит как игра в песочнице.",p:"A construction site from above resembling a child's sandbox with toy cranes and trucks, tilt-shift miniature effect, warm afternoon light, vertical 9:16"},
+    {g:"миниатюра",t:"Миниатюрный мир",v:1,upd:"13.08.2026",swap:"локацию сверху",
+     d:"Реальное место выглядит игрушечным макетом. Без сильного размытия сверху и снизу эффект не читается.",
+     note:"Базовая версия: задан угол съёмки, резкая полоса по центру и слегка ускоренный ритм движения.",
+     p:"High aerial view looking down at 60 degrees, tilt-shift lens. A real city intersection at rush hour rendered so it reads as a handmade toy model: strong optical blur across the top and bottom thirds, a razor-sharp band through the center, exaggerated color saturation, cars moving in slightly accelerated stop-motion cadence. Bright midday sun, hard tiny shadows. Photorealistic tilt-shift miniature effect, medium format look. No text. Vertical 9:16"},
 
-    {g:"абсурд",t:"Реклама воздуха",d:"Дорогая реклама бутилированного воздуха, снятая как парфюм.",p:"A luxury perfume-style commercial for a bottle of ordinary air, slow motion product shots, dramatic studio lighting, ultra premium aesthetic, vertical 9:16"},
-    {g:"абсурд",t:"Показ мод для собак",d:"Настоящий модный показ, но все модели — собаки.",p:"A high fashion runway show where all the models are dogs in designer outfits, professional runway lighting, photographers flashing, hyperrealistic, vertical 9:16"},
-    {g:"абсурд",t:"Пельмени как ювелирка",d:"Обычная еда снята как реклама драгоценностей.",p:"Ordinary dumplings filmed like a luxury jewelry commercial, rotating on velvet, dramatic rim light, extreme macro detail, premium aesthetic, vertical 9:16"},
-    {g:"абсурд",t:"Утро миллиардера-кота",d:"Кот проживает утро успешного человека: кофе, костюм, машина.",p:"A cat living a billionaire morning routine: espresso, tailored suit, luxury car, filmed as a serious lifestyle documentary, photorealistic, vertical 9:16"},
+    {g:"абсурд",t:"Гиперреалистичный абсурд",v:1,upd:"13.08.2026",swap:"обычный предмет",
+     d:"Ерунда, снятая как реклама за миллион. Чем серьёзнее продакшн и чем дешевле предмет, тем сильнее эффект.",
+     note:"Базовая версия: добавлен премиальный свет, вращение на бархате и прямой запрет на комедийную подачу.",
+     p:"Luxury commercial cinematography, 100mm macro, slow rotating dolly. A single ordinary boiled dumpling presented as a priceless jewel: resting on black velvet under a glass dome, rotating slowly, lit by one dramatic rim light and a soft top fill. Condensation beads catching light, steam drifting through the beam. The absolute seriousness of a high-end jewelry advertisement — no wink, no comedic framing. Ultra premium color grade, deep blacks, photorealistic. No text. Vertical 9:16"},
 
-    {g:"стихия",t:"Снег в комнате",d:"В обычной гостиной идёт настоящий снегопад.",p:"Heavy snow falling inside an ordinary living room, snow settling on the sofa and table, person sitting calmly, soft cold light, photorealistic, vertical 9:16"},
-    {g:"стихия",t:"Гроза в стакане",d:"В стакане воды бушует настоящая гроза с молниями.",p:"A real thunderstorm raging inside a drinking glass on a table, tiny lightning bolts and clouds, macro photography, dark background, photorealistic, vertical 9:16"},
-    {g:"стихия",t:"Туман в лифте",d:"Двери лифта открываются, внутри — плотный туман и лес.",p:"Elevator doors opening to reveal dense fog and a forest inside the cabin, light beams through mist, eerie calm, photorealistic, vertical 9:16"},
-    {g:"стихия",t:"Океан за дверью",d:"За обычной межкомнатной дверью — океанские волны.",p:"An ordinary apartment door opening onto crashing ocean waves instead of a room, water held back by an invisible wall, dramatic light, photorealistic, vertical 9:16"}
+    {g:"стихия",t:"Погодное чудо",v:1,upd:"13.08.2026",swap:"стихию и помещение",
+     d:"Невозможная погода в подчёркнуто обычном помещении. Контраст держится на бытовых деталях вокруг.",
+     note:"Базовая версия: прописаны накопление снега на поверхностях и столкновение холодного и тёплого света.",
+     p:"Medium wide shot, 35mm lens, slow push-in. Heavy snow falls inside an ordinary living room — flakes drifting past a lit floor lamp, settling on the sofa cushions, the coffee table and a half-read book. A person sits reading, unbothered, breath faintly visible. The room is emphatically normal: radiator, houseplant, family photos. Cold blue window light against the warm lamp interior, realistic snow accumulation, shallow depth of field. Photorealistic. No cuts, no text. Vertical 9:16"}
   ];
 
   var SUBJECTS=["кот","старый чайник","городская площадь","подъезд панельки","чашка кофе","кроссовки","лифт","окно кухни","автобусная остановка","дерево во дворе","зеркало в ванной","детская площадка","мост через реку","библиотека","пустой стадион","заброшенный завод","парк осенью","рынок","метро в час пик","маяк"];
@@ -684,14 +704,19 @@
       if(query&&(p.t+" "+p.d+" "+p.p+" "+p.g).toLowerCase().indexOf(query)<0)return;
       shown++;
       var c=el("article","pcard");
-      c.appendChild(el("span","tag",esc(p.g)));
+      var head=el("div","pcard-head");
+      head.appendChild(el("span","tag",esc(p.g)));
+      head.appendChild(el("span","ver","v"+p.v+" · "+esc(p.upd)));
+      c.appendChild(head);
       c.appendChild(el("h3",null,esc(p.t)));
       c.appendChild(el("p",null,esc(p.d)));
       c.appendChild(el("div","prompt",esc(p.p)));
+      c.appendChild(el("p","swap","Меняйте под себя: "+esc(p.swap)));
       var b=el("button","copy","⧉ Скопировать");
       b.type="button";
       b.addEventListener("click",function(){copy(p.p,b)});
       c.appendChild(b);
+      c.appendChild(el("p","note","Последнее усиление: "+esc(p.note)));
       list.appendChild(c);
     });
     $("pEmpty").hidden=shown>0;
@@ -812,7 +837,8 @@
       return s;
     }
     r.appendChild(slot("формат",f.t,true));
-    r.appendChild(slot("сюжет",p.t+" — "+p.d));
+    r.appendChild(slot("эталон","«"+p.t+"» · v"+p.v));
+    r.appendChild(slot("подставьте","вместо базового варианта — "+pick(SUBJECTS)+" (меняем "+p.swap+")"));
     r.appendChild(slot("первый кадр",h.s||h.t));
     r.appendChild(slot("подпись",c.s||c.t));
 
