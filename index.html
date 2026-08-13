@@ -1,1101 +1,831 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>КОНТЕНТ-ЦЕХ · Недвижимость</title>
+<title>НЕЙРОПОТОК</title>
 </head>
 <body>
 <!-- ARTIFACT-START -->
 <style>
+  *,*::before,*::after{box-sizing:border-box}
+
   :root{
-    --ground:#ECEDEB;
-    --panel:#F7F7F5;
-    --panel-2:#FFFFFF;
-    --ink:#17191C;
-    --ink-soft:#50555C;
-    --ink-faint:#8B9096;
-    --line:#C7C9C6;
-    --line-soft:#DDDEDA;
-    --accent:#E8420A;
+    --ground:#EEEFF2;
+    --surface:#FFFFFF;
+    --frame:#0B0D14;
+    --frame-ink:#F4F5F8;
+    --ink:#0B0D14;
+    --ink-soft:#545A6B;
+    --ink-faint:#8B90A0;
+    --line:#D3D6DE;
+    --line-soft:#E4E6EC;
+    --accent:#1B2AFF;
     --accent-ink:#FFFFFF;
-    --blue:#2B4BC8;
-    --good:#1E7A3C;
-    --warm:#8A6A00;
-    --flash:#FBE3D8;
+    --live:#FF2E63;
+    --shadow:0 1px 2px rgba(11,13,20,.05),0 8px 24px rgba(11,13,20,.06);
+
+    --f-display:ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    --f-mono:ui-monospace,"SF Mono","JetBrains Mono",Menlo,Consolas,"Liberation Mono",monospace;
   }
-  :root[data-theme="dark"]{
-    --ground:#141619;
-    --panel:#1C1F23;
-    --panel-2:#23272C;
-    --ink:#ECEDEA;
-    --ink-soft:#A8ADB3;
-    --ink-faint:#6E747B;
-    --line:#3A3F45;
-    --line-soft:#2B3035;
-    --accent:#FF6A33;
-    --accent-ink:#17191C;
-    --blue:#8FA3F5;
-    --good:#5FBF7F;
-    --warm:#D9B44A;
-    --flash:#3A2A22;
-  }
-  @media (prefers-color-scheme: dark){
+  @media (prefers-color-scheme:dark){
     :root:not([data-theme="light"]){
-      --ground:#141619;
-      --panel:#1C1F23;
-      --panel-2:#23272C;
-      --ink:#ECEDEA;
-      --ink-soft:#A8ADB3;
-      --ink-faint:#6E747B;
-      --line:#3A3F45;
-      --line-soft:#2B3035;
-      --accent:#FF6A33;
-      --accent-ink:#17191C;
-      --blue:#8FA3F5;
-      --good:#5FBF7F;
-      --warm:#D9B44A;
-      --flash:#3A2A22;
+      --ground:#0B0D14;
+      --surface:#14161F;
+      --frame:#000208;
+      --frame-ink:#F4F5F8;
+      --ink:#EEEFF2;
+      --ink-soft:#9AA0B2;
+      --ink-faint:#666C7E;
+      --line:#282C39;
+      --line-soft:#1E212B;
+      --accent:#6B78FF;
+      --accent-ink:#05060C;
+      --live:#FF4D77;
+      --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
     }
   }
+  :root[data-theme="dark"]{
+    --ground:#0B0D14;
+    --surface:#14161F;
+    --frame:#000208;
+    --frame-ink:#F4F5F8;
+    --ink:#EEEFF2;
+    --ink-soft:#9AA0B2;
+    --ink-faint:#666C7E;
+    --line:#282C39;
+    --line-soft:#1E212B;
+    --accent:#6B78FF;
+    --accent-ink:#05060C;
+    --live:#FF4D77;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
+  }
 
-  *{box-sizing:border-box}
-  html,body{margin:0;padding:0}
   body{
+    margin:0;
     background:var(--ground);
     color:var(--ink);
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    font-family:var(--f-display);
     font-size:16px;
-    line-height:1.55;
+    line-height:1.6;
     -webkit-font-smoothing:antialiased;
   }
-  .mono{
-    font-family:ui-monospace,"SF Mono","Cascadia Mono","JetBrains Mono",Consolas,"Liberation Mono",monospace;
-  }
-  .wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 20px}
 
-  a{color:var(--blue)}
-  button{font:inherit;color:inherit;cursor:pointer}
-  :focus-visible{outline:3px solid var(--accent);outline-offset:2px}
-
-  /* ---------- title block (штамп) ---------- */
-  header{padding:34px 0 0}
-  .stamp{
-    border:2px solid var(--ink);
-    background:var(--panel);
-  }
-  .stamp-top{
-    display:flex;flex-wrap:wrap;align-items:stretch;
-    border-bottom:2px solid var(--ink);
-  }
-  .brand{
-    flex:1 1 380px;
-    padding:26px 24px 20px;
-    border-right:2px solid var(--ink);
-    min-width:280px;
-  }
-  .brand h1{
-    margin:0;
-    font-weight:900;
-    font-size:clamp(2.1rem,6vw,3.6rem);
-    line-height:.95;
-    letter-spacing:-.02em;
-    text-transform:uppercase;
-    text-wrap:balance;
-  }
-  .brand h1 .x{color:var(--accent)}
-  .brand p{
-    margin:.9em 0 0;
-    max-width:46ch;
-    color:var(--ink-soft);
-  }
-  .stamp-cells{
-    flex:1 1 260px;
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    min-width:240px;
-  }
-  .cell{
-    padding:12px 14px;
-    border-left:1px solid var(--line);
-    border-top:1px solid var(--line);
-  }
-  .cell:nth-child(-n+2){border-top:none}
-  .cell dt{
-    margin:0;
-    font-size:.62rem;
-    letter-spacing:.14em;
-    text-transform:uppercase;
-    color:var(--ink-faint);
-  }
-  .cell dd{
-    margin:.25em 0 0;
-    font-size:.86rem;
-    font-weight:600;
-  }
-  .hazard{
-    height:12px;
-    background:repeating-linear-gradient(-45deg,var(--accent) 0 14px,transparent 14px 28px);
-    border-top:2px solid var(--ink);
-  }
-  .theme-toggle{
-    background:none;border:1px solid var(--line);
-    padding:6px 10px;border-radius:2px;
-    font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;
-    color:var(--ink-soft);
-    margin-top:10px;
-  }
-  .theme-toggle:hover{border-color:var(--ink);color:var(--ink)}
-
-  /* ---------- nav ---------- */
-  nav{
+  /* ---------- HUD ---------- */
+  .hud{
+    border-bottom:1px solid var(--line);
+    background:var(--surface);
     position:sticky;top:0;z-index:20;
-    background:var(--ground);
-    border-bottom:2px solid var(--ink);
-    margin-top:26px;
   }
-  .tabs{
-    display:flex;gap:0;overflow-x:auto;
-    max-width:1080px;margin:0 auto;padding:0 20px;
+  .hud-in{
+    display:flex;align-items:center;gap:20px;flex-wrap:wrap;
+    padding:12px 0;
   }
-  .tab{
-    background:none;border:none;
-    border-right:1px solid var(--line);
-    padding:13px 18px 11px;
-    font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;
+  .rec{
+    display:flex;align-items:center;gap:8px;
+    font-family:var(--f-mono);font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;
     color:var(--ink-soft);
-    white-space:nowrap;
-    border-bottom:4px solid transparent;
   }
-  .tab:first-child{border-left:1px solid var(--line)}
-  .tab .n{color:var(--ink-faint);margin-right:.5em}
-  .tab[aria-selected="true"]{
-    color:var(--ink);font-weight:700;
-    border-bottom-color:var(--accent);
+  .dot{
+    width:9px;height:9px;border-radius:50%;background:var(--live);
+    box-shadow:0 0 0 0 rgba(255,46,99,.55);
+    animation:pulse 2.4s ease-out infinite;
+  }
+  @keyframes pulse{
+    0%{box-shadow:0 0 0 0 rgba(255,46,99,.5)}
+    70%{box-shadow:0 0 0 9px rgba(255,46,99,0)}
+    100%{box-shadow:0 0 0 0 rgba(255,46,99,0)}
+  }
+  .hud-stats{display:flex;gap:22px;margin-left:auto;flex-wrap:wrap}
+  .hstat{display:flex;flex-direction:column;line-height:1.2}
+  .hstat b{
+    font-family:var(--f-mono);font-size:1.02rem;font-weight:600;
+    font-variant-numeric:tabular-nums;letter-spacing:-.01em;
+  }
+  .hstat span{
+    font-family:var(--f-mono);font-size:.6rem;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--ink-faint);
+  }
+  .hstat.live b{color:var(--live)}
+
+  /* ---------- HERO ---------- */
+  .hero{padding:56px 0 40px;border-bottom:1px solid var(--line)}
+  .eyebrow{
+    font-family:var(--f-mono);font-size:.66rem;letter-spacing:.2em;
+    text-transform:uppercase;color:var(--accent);margin:0 0 18px;
+  }
+  h1{
+    font-size:clamp(2.6rem,8.5vw,5.6rem);
+    line-height:.92;font-weight:800;letter-spacing:-.035em;
+    text-transform:uppercase;margin:0;text-wrap:balance;
+  }
+  h1 em{font-style:normal;color:var(--accent)}
+  .lede{
+    max-width:58ch;margin:24px 0 0;font-size:1.06rem;color:var(--ink-soft);
+  }
+  .goal{
+    display:flex;gap:10px;flex-wrap:wrap;margin-top:26px;
+  }
+  .chip{
+    font-family:var(--f-mono);font-size:.68rem;letter-spacing:.08em;
+    text-transform:uppercase;padding:7px 12px;
+    border:1px solid var(--line);border-radius:2px;color:var(--ink-soft);
+    background:var(--surface);
+  }
+  .chip.hot{border-color:var(--accent);color:var(--accent)}
+
+  /* ---------- TABS ---------- */
+  .tabs{
+    display:flex;gap:4px;overflow-x:auto;padding:14px 0;
+    border-bottom:1px solid var(--line);
+    position:sticky;top:57px;background:var(--ground);z-index:15;
+    scrollbar-width:none;
+  }
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{
+    flex:0 0 auto;background:none;border:1px solid transparent;
+    font-family:var(--f-mono);font-size:.7rem;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--ink-faint);
+    padding:9px 14px;cursor:pointer;border-radius:2px;
   }
   .tab:hover{color:var(--ink)}
-
-  main{padding:38px 0 30px}
-  section[hidden]{display:none}
-  .sec-head{margin:0 0 6px}
-  .sec-head .code{
-    font-size:.68rem;letter-spacing:.16em;color:var(--accent);
-    text-transform:uppercase;display:block;margin-bottom:6px;
+  .tab:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .tab[aria-selected="true"]{
+    background:var(--ink);color:var(--ground);
   }
+
+  section[role="tabpanel"]{padding:44px 0 72px}
+  .sec-head{margin-bottom:8px}
   .sec-head h2{
-    margin:0;font-weight:900;text-transform:uppercase;
-    font-size:clamp(1.5rem,3.4vw,2.1rem);letter-spacing:-.01em;
-    text-wrap:balance;
+    font-size:clamp(1.7rem,4.4vw,2.6rem);line-height:1;
+    font-weight:800;letter-spacing:-.03em;text-transform:uppercase;margin:6px 0 0;
   }
-  .sec-lede{max-width:64ch;color:var(--ink-soft);margin:.7em 0 28px}
+  .sec-lede{max-width:62ch;color:var(--ink-soft);margin:16px 0 34px}
 
-  /* ---------- rubricator ---------- */
-  .rgrid{
-    display:grid;gap:14px;
-    grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+  /* ---------- ENGINE ---------- */
+  .engine{
+    display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:32px;align-items:start;
   }
-  .rcard{
-    background:var(--panel);
-    border:1px solid var(--line);
-    border-top:3px solid var(--ink);
-    padding:18px 18px 16px;
-    display:flex;flex-direction:column;gap:10px;
-  }
-  .rcard-top{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
-  .rcode{font-size:.7rem;letter-spacing:.14em;color:var(--accent)}
-  .rfreq{font-size:.66rem;letter-spacing:.1em;color:var(--ink-faint);text-transform:uppercase}
-  .rcard h3{margin:0;font-size:1.14rem;font-weight:800;text-transform:uppercase;letter-spacing:.01em}
-  .rcard .what{margin:0;color:var(--ink-soft);font-size:.92rem}
-  .rcard .psy{
-    margin:0;font-size:.8rem;color:var(--ink);
-    border-left:3px solid var(--blue);padding-left:10px;
-  }
-  .rcard .psy b{color:var(--blue);font-weight:700}
-  .rcard .go{
-    margin-top:auto;align-self:flex-start;
-    background:none;border:1px solid var(--line);
-    padding:7px 12px;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;
-    color:var(--ink-soft);border-radius:2px;
-  }
-  .rcard .go:hover{border-color:var(--accent);color:var(--accent)}
+  @media (max-width:860px){.engine{grid-template-columns:1fr}}
 
-  /* ---------- ideas ---------- */
-  .toolbar{
-    display:flex;flex-wrap:wrap;gap:10px;align-items:center;
-    padding:14px;border:1px solid var(--line);background:var(--panel);
-    margin-bottom:10px;
+  .reel{
+    background:var(--frame);color:var(--frame-ink);
+    border-radius:6px;padding:26px 24px;
+    aspect-ratio:9/16;max-height:620px;
+    display:flex;flex-direction:column;gap:18px;
+    box-shadow:var(--shadow);position:relative;overflow:hidden;
   }
-  .toolbar input[type="search"]{
-    flex:1 1 200px;min-width:160px;
-    background:var(--panel-2);border:1px solid var(--line);
-    color:var(--ink);padding:9px 12px;font:inherit;font-size:.92rem;border-radius:2px;
+  .reel::after{
+    content:"9:16";position:absolute;right:14px;bottom:12px;
+    font-family:var(--f-mono);font-size:.58rem;letter-spacing:.14em;
+    color:rgba(244,245,248,.32);
   }
-  .roulette{
-    background:var(--accent);color:var(--accent-ink);
-    border:none;padding:10px 16px;border-radius:2px;
-    font-weight:800;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;
+  .reel-top{
+    display:flex;justify-content:space-between;align-items:center;
+    font-family:var(--f-mono);font-size:.6rem;letter-spacing:.16em;
+    text-transform:uppercase;color:rgba(244,245,248,.5);
+    border-bottom:1px solid rgba(244,245,248,.14);padding-bottom:12px;
   }
-  .roulette:hover{filter:brightness(1.08)}
-  .progress{font-size:.72rem;letter-spacing:.08em;color:var(--ink-soft);white-space:nowrap}
-  .progress b{color:var(--good)}
-  .chips{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 22px}
-  .chip{
-    background:var(--panel);border:1px solid var(--line);border-radius:999px;
-    padding:5px 12px;font-size:.72rem;letter-spacing:.06em;color:var(--ink-soft);
+  .reel-slot{border-top:1px solid rgba(244,245,248,.12);padding-top:14px}
+  .reel-slot:first-of-type{border-top:0;padding-top:0}
+  .reel-slot h4{
+    font-family:var(--f-mono);font-size:.58rem;letter-spacing:.18em;
+    text-transform:uppercase;color:var(--live);margin:0 0 6px;font-weight:500;
   }
-  .chip[aria-pressed="true"]{
-    background:var(--ink);color:var(--ground);border-color:var(--ink);font-weight:700;
-  }
-  .chip:hover{border-color:var(--ink);color:var(--ink)}
-  .chip[aria-pressed="true"]:hover{color:var(--ground)}
-
-  .ideas{display:flex;flex-direction:column;gap:8px}
-  .idea{
-    display:flex;gap:14px;align-items:flex-start;
-    background:var(--panel);border:1px solid var(--line);
-    padding:14px 16px;
-    transition:background .5s;
-  }
-  .idea.done{opacity:.55}
-  .idea.done .it{text-decoration:line-through}
-  .idea.flash{background:var(--flash);border-color:var(--accent)}
-  .idea .code{
-    flex:0 0 auto;font-size:.68rem;letter-spacing:.1em;color:var(--ink-faint);
-    padding-top:3px;min-width:52px;
-  }
-  .idea-body{flex:1 1 auto;min-width:0}
-  .idea .it{margin:0;font-weight:700;font-size:1rem}
-  .idea .id{margin:.3em 0 0;color:var(--ink-soft);font-size:.88rem;max-width:70ch}
-  .badges{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
-  .badge{
-    font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;
-    border:1px solid var(--line);border-radius:2px;padding:2px 7px;color:var(--ink-soft);
-  }
-  .badge.p-viral{border-color:var(--accent);color:var(--accent)}
-  .badge.p-sell{border-color:var(--good);color:var(--good)}
-  .badge.p-warm{border-color:var(--warm);color:var(--warm)}
-  .shot{
-    flex:0 0 auto;
-    background:none;border:1px solid var(--line);border-radius:2px;
-    padding:7px 11px;font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;
-    color:var(--ink-soft);
-  }
-  .shot:hover{border-color:var(--good);color:var(--good)}
-  .idea.done .shot{border-color:var(--good);color:var(--good);font-weight:700}
-  .empty{padding:30px;text-align:center;color:var(--ink-faint);border:1px dashed var(--line)}
-
-  /* ---------- hooks ---------- */
-  .gen{
-    border:2px solid var(--ink);background:var(--panel);
-    padding:24px;margin-bottom:34px;
-  }
-  .gen-label{font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-faint)}
-  .gen-out{
-    margin:12px 0 18px;min-height:3.2em;
-    font-size:clamp(1.15rem,2.6vw,1.55rem);font-weight:800;line-height:1.3;
-    text-wrap:balance;
-  }
-  .hgroups{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}
-  .hgroup{background:var(--panel);border:1px solid var(--line);padding:16px 18px}
-  .hgroup h3{
-    margin:0 0 4px;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);
-  }
-  .hgroup .why{margin:0 0 12px;font-size:.8rem;color:var(--ink-faint)}
-  .hgroup ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:9px}
-  .hgroup li{
-    font-size:.92rem;font-weight:600;
-    border-left:3px solid var(--line);padding-left:10px;
+  .reel-slot p{margin:0;font-size:.94rem;line-height:1.45}
+  .reel-slot p.big{font-size:1.18rem;font-weight:700;letter-spacing:-.015em;line-height:1.25}
+  .reel-empty{
+    margin:auto;text-align:center;color:rgba(244,245,248,.45);
+    font-family:var(--f-mono);font-size:.76rem;letter-spacing:.06em;max-width:24ch;
   }
 
-  /* ---------- psychology ---------- */
-  .pgrid{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(320px,1fr))}
-  .pcard{background:var(--panel);border:1px solid var(--line);padding:18px}
-  .pcard .pn{
-    font-size:.68rem;letter-spacing:.14em;color:var(--blue);text-transform:uppercase;
+  .panel{display:flex;flex-direction:column;gap:14px}
+  .btn{
+    font-family:var(--f-mono);font-size:.72rem;letter-spacing:.12em;
+    text-transform:uppercase;padding:14px 18px;border-radius:3px;
+    border:1px solid var(--ink);background:var(--ink);color:var(--ground);
+    cursor:pointer;text-align:left;
   }
-  .pcard h3{margin:.4em 0 .4em;font-size:1.05rem;font-weight:800}
-  .pcard p{margin:0;color:var(--ink-soft);font-size:.9rem}
-  .pcard .do{
-    margin-top:12px;font-size:.82rem;color:var(--ink);
-    border-top:1px dashed var(--line);padding-top:10px;
-  }
-  .pcard .do b{color:var(--good)}
+  .btn:hover{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+  .btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+  .btn.ghost:hover{border-color:var(--accent);color:var(--accent);background:transparent}
+  .btn.done{background:var(--live);border-color:var(--live);color:#fff}
 
-  /* ---------- system ---------- */
-  .steps{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin-bottom:34px}
-  .step{border:1px solid var(--line);background:var(--panel);padding:16px 18px;border-top:3px solid var(--accent)}
-  .step .sn{font-size:.66rem;letter-spacing:.14em;color:var(--accent)}
-  .step h3{margin:.35em 0 .3em;font-size:1rem;font-weight:800;text-transform:uppercase}
-  .step p{margin:0;font-size:.86rem;color:var(--ink-soft)}
-  .tblwrap{overflow-x:auto;border:1px solid var(--line);margin-bottom:34px}
-  table{border-collapse:collapse;width:100%;min-width:640px;background:var(--panel)}
-  th,td{border:1px solid var(--line-soft);padding:10px 12px;text-align:left;font-size:.88rem;vertical-align:top}
-  th{
-    font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint);
-    font-weight:700;background:var(--panel-2);
+  .streakbox{
+    border:1px solid var(--line);border-radius:4px;background:var(--surface);
+    padding:18px;
   }
-  td .day{font-size:.66rem;letter-spacing:.1em;color:var(--accent);display:block}
-  .rules{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}
-  .rule{border-left:3px solid var(--accent);padding:2px 0 2px 14px}
-  .rule h3{margin:0 0 .2em;font-size:.95rem;font-weight:800}
-  .rule p{margin:0;font-size:.86rem;color:var(--ink-soft)}
-  .num{font-variant-numeric:tabular-nums}
-
-  /* ---------- свежее ---------- */
-  .fdate{
-    display:flex;align-items:center;gap:12px;
-    margin:26px 0 10px;
-    font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);
+  .streakbox h3{
+    font-family:var(--f-mono);font-size:.62rem;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--ink-faint);margin:0 0 12px;font-weight:500;
   }
-  .fdate::after{content:"";flex:1;border-top:1px dashed var(--line)}
-  .fdate:first-child{margin-top:0}
-  .fdate .fnew{
-    background:var(--accent);color:var(--accent-ink);
-    padding:2px 8px;border-radius:2px;font-weight:700;
+  .grid-days{display:grid;grid-template-columns:repeat(14,1fr);gap:4px}
+  .day{aspect-ratio:1;border-radius:1px;background:var(--line-soft);border:1px solid var(--line-soft)}
+  .day.on{background:var(--accent);border-color:var(--accent)}
+  .day.today{border-color:var(--live);border-width:2px}
+  .streak-note{
+    font-family:var(--f-mono);font-size:.62rem;color:var(--ink-faint);
+    margin:12px 0 0;line-height:1.5;
   }
 
-  /* ---------- нейро ---------- */
+  /* ---------- FORMAT FRAMES ---------- */
+  .frames{
+    display:grid;gap:16px;
+    grid-template-columns:repeat(auto-fill,minmax(250px,1fr));
+  }
+  .fcard{
+    background:var(--frame);color:var(--frame-ink);border-radius:5px;
+    padding:20px;display:flex;flex-direction:column;gap:12px;
+    box-shadow:var(--shadow);
+  }
+  @media (min-width:700px){.fcard{aspect-ratio:4/5}}
+  .fcard .mech{
+    font-family:var(--f-mono);font-size:.58rem;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--live);
+  }
+  .fcard h3{
+    font-size:1.32rem;font-weight:800;letter-spacing:-.02em;line-height:1.05;
+    margin:0;text-transform:uppercase;
+  }
+  .fcard p{margin:0;font-size:.86rem;line-height:1.5;color:rgba(244,245,248,.78)}
+  .fcard .test{
+    margin-top:auto;padding-top:12px;border-top:1px solid rgba(244,245,248,.14);
+    font-family:var(--f-mono);font-size:.66rem;line-height:1.5;
+    color:rgba(244,245,248,.6);
+  }
+
+  /* ---------- PROMPTS ---------- */
+  .tools{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:24px;align-items:center}
+  .search{
+    flex:1 1 240px;padding:11px 14px;border:1px solid var(--line);border-radius:3px;
+    background:var(--surface);color:var(--ink);font-family:var(--f-mono);font-size:.78rem;
+  }
+  .search:focus{outline:2px solid var(--accent);outline-offset:-1px}
+  .filt{
+    font-family:var(--f-mono);font-size:.64rem;letter-spacing:.1em;text-transform:uppercase;
+    padding:8px 11px;border:1px solid var(--line);background:var(--surface);
+    color:var(--ink-soft);border-radius:2px;cursor:pointer;
+  }
+  .filt[aria-pressed="true"]{background:var(--ink);color:var(--ground);border-color:var(--ink)}
+  .filt:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+  .plist{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(320px,1fr))}
+  .pcard{
+    background:var(--surface);border:1px solid var(--line);border-radius:4px;
+    padding:18px;display:flex;flex-direction:column;gap:10px;
+  }
+  .pcard .tag{
+    font-family:var(--f-mono);font-size:.58rem;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--accent);
+  }
+  .pcard h3{font-size:1.02rem;font-weight:700;letter-spacing:-.01em;margin:0;line-height:1.2}
+  .pcard p{margin:0;font-size:.86rem;color:var(--ink-soft);line-height:1.5}
   .prompt{
-    margin-top:12px;border:1px dashed var(--line);background:var(--ground);
-    padding:10px 12px;font-size:.76rem;line-height:1.5;color:var(--ink-soft);
-    word-break:break-word;
+    font-family:var(--f-mono);font-size:.72rem;line-height:1.55;
+    background:var(--ground);border:1px solid var(--line-soft);border-radius:3px;
+    padding:11px 12px;color:var(--ink-soft);word-break:break-word;
   }
-  .prompt .plabel{
-    display:block;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;
-    color:var(--ink-faint);margin-bottom:4px;
+  .copy{
+    align-self:flex-start;font-family:var(--f-mono);font-size:.62rem;letter-spacing:.1em;
+    text-transform:uppercase;padding:7px 11px;border-radius:2px;
+    border:1px solid var(--line);background:transparent;color:var(--ink-soft);cursor:pointer;
   }
-  .copybtn{
-    margin-top:10px;background:none;border:1px solid var(--line);border-radius:2px;
-    padding:6px 11px;font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;
-    color:var(--ink-soft);
+  .copy:hover{border-color:var(--accent);color:var(--accent)}
+  .copy:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .empty{color:var(--ink-faint);font-family:var(--f-mono);font-size:.8rem;padding:30px 0}
+
+  /* ---------- LISTS ---------- */
+  .rows{display:flex;flex-direction:column;border-top:1px solid var(--line)}
+  .row{
+    display:grid;grid-template-columns:170px minmax(0,1fr);gap:22px;
+    padding:20px 0;border-bottom:1px solid var(--line);align-items:start;
   }
-  .copybtn:hover{border-color:var(--blue);color:var(--blue)}
-  .ntool{border-color:var(--blue);color:var(--blue)}
+  @media (max-width:640px){.row{grid-template-columns:1fr;gap:8px}}
+  .row .k{
+    font-family:var(--f-mono);font-size:.66rem;letter-spacing:.13em;
+    text-transform:uppercase;color:var(--accent);padding-top:3px;
+  }
+  .row h3{margin:0 0 6px;font-size:1.06rem;font-weight:700;letter-spacing:-.01em}
+  .row p{margin:0;color:var(--ink-soft);font-size:.94rem}
+  .row .said{
+    display:block;margin-top:10px;font-family:var(--f-mono);font-size:.76rem;
+    color:var(--ink);background:var(--surface);border-left:2px solid var(--live);
+    padding:9px 12px;line-height:1.5;
+  }
+
+  /* ---------- PHASES ---------- */
+  .phases{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+  .phase{
+    background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:22px;
+    display:flex;flex-direction:column;gap:14px;
+  }
+  .phase .num{
+    font-family:var(--f-mono);font-size:2.2rem;font-weight:600;line-height:1;
+    color:var(--accent);letter-spacing:-.04em;font-variant-numeric:tabular-nums;
+  }
+  .phase h3{margin:0;font-size:1.2rem;font-weight:800;text-transform:uppercase;letter-spacing:-.02em}
+  .phase .win{
+    font-family:var(--f-mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--live);border:1px solid var(--live);border-radius:2px;padding:6px 9px;
+    align-self:flex-start;
+  }
+  .phase ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:8px}
+  .phase li{font-size:.9rem;color:var(--ink-soft);line-height:1.5}
+
+  /* ---------- FRESH ---------- */
+  .drop-head{
+    display:flex;align-items:center;gap:12px;margin:30px 0 12px;
+    font-family:var(--f-mono);font-size:.66rem;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--ink-faint);
+  }
+  .drop-head:first-child{margin-top:0}
+  .drop-head::after{content:"";flex:1;border-top:1px dashed var(--line)}
+  .drop-head .new{background:var(--live);color:#fff;padding:2px 8px;border-radius:2px;font-weight:600}
+  .fresh-item{
+    background:var(--surface);border:1px solid var(--line);border-radius:4px;
+    padding:16px 18px;margin-bottom:10px;
+  }
+  .fresh-item h3{margin:0 0 5px;font-size:1rem;font-weight:700;letter-spacing:-.01em}
+  .fresh-item p{margin:0;font-size:.9rem;color:var(--ink-soft);line-height:1.5}
 
   footer{
-    border-top:2px solid var(--ink);margin-top:20px;
-    padding:18px 0 40px;
-    color:var(--ink-faint);font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;
+    border-top:1px solid var(--line);padding:30px 0 50px;
+    font-family:var(--f-mono);font-size:.66rem;color:var(--ink-faint);
+    display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;
   }
 
-  @media (prefers-reduced-motion: reduce){
-    *{scroll-behavior:auto!important;transition:none!important}
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important}
   }
 </style>
 
-<header class="wrap">
-  <div class="stamp">
-    <div class="stamp-top">
-      <div class="brand">
-        <h1>Контент-<span class="x">Цех</span><br>Недвижимость</h1>
-        <p>Личная платформа контент-производства: рубрикатор, банк идей, хуки и система, собранные под одну задачу — миллионные охваты, которые нативно продают метры.</p>
-        <button class="theme-toggle mono" id="themeBtn" type="button">Тема: авто</button>
-      </div>
-      <dl class="stamp-cells mono">
-        <div class="cell"><dt>Объект</dt><dd>Личная платформа</dd></div>
-        <div class="cell"><dt>Стадия</dt><dd>«П» — производство</dd></div>
-        <div class="cell"><dt>Масштаб</dt><dd class="num">1 : 1 000 000 👁</dd></div>
-        <div class="cell"><dt>Листов</dt><dd>7</dd></div>
-        <div class="cell"><dt>Рубрик</dt><dd class="num" id="statR">—</dd></div>
-        <div class="cell"><dt>Идей в банке</dt><dd class="num" id="statI">—</dd></div>
-      </dl>
+<div class="hud">
+  <div class="wrap hud-in">
+    <div class="rec"><span class="dot"></span>нейропоток · соло</div>
+    <div class="hud-stats">
+      <div class="hstat live"><b id="sStreak">0</b><span>дней подряд</span></div>
+      <div class="hstat"><b id="sTotal">0</b><span>выложено</span></div>
+      <div class="hstat"><b>1 000 000</b><span>цель</span></div>
     </div>
-    <div class="hazard" aria-hidden="true"></div>
+  </div>
+</div>
+
+<header class="wrap hero">
+  <p class="eyebrow">один человек · один ролик в день · нейросети</p>
+  <h1>Пока другие<br>снимают,<br><em>я генерирую</em></h1>
+  <p class="lede">Рабочий стол одного человека, который каждый день выкладывает нейроролик в Instagram. Здесь лежит всё, что нужно, чтобы завтра снова выйти с новым видео: форматы, которые собирают от миллиона, готовые промпты, хуки и система, которая превращает просмотры в подписчиков.</p>
+  <div class="goal">
+    <span class="chip hot">минимум 1 ролик в день</span>
+    <span class="chip">простое исполнение</span>
+    <span class="chip">от 1 000 000 просмотров</span>
+    <span class="chip">цель — 1 000 000 подписчиков</span>
   </div>
 </header>
 
-<nav aria-label="Разделы">
-  <div class="tabs mono" role="tablist">
-    <button class="tab" role="tab" data-tab="rubrics" aria-selected="true"><span class="n">Л1</span>Рубрикатор</button>
-    <button class="tab" role="tab" data-tab="ideas" aria-selected="false"><span class="n">Л2</span>Банк идей</button>
-    <button class="tab" role="tab" data-tab="hooks" aria-selected="false"><span class="n">Л3</span>Хуки</button>
-    <button class="tab" role="tab" data-tab="psy" aria-selected="false"><span class="n">Л4</span>Психология</button>
-    <button class="tab" role="tab" data-tab="system" aria-selected="false"><span class="n">Л5</span>Система</button>
-    <button class="tab" role="tab" data-tab="fresh" aria-selected="false"><span class="n">Л6</span>Свежее</button>
-    <button class="tab" role="tab" data-tab="neuro" aria-selected="false"><span class="n">Л7</span>Нейро-ролики</button>
-  </div>
+<nav class="wrap tabs" role="tablist" aria-label="Разделы">
+  <button class="tab" role="tab" data-tab="engine" aria-selected="true">Движок</button>
+  <button class="tab" role="tab" data-tab="formats" aria-selected="false">Форматы</button>
+  <button class="tab" role="tab" data-tab="prompts" aria-selected="false">Промпты</button>
+  <button class="tab" role="tab" data-tab="hooks" aria-selected="false">Хуки</button>
+  <button class="tab" role="tab" data-tab="growth" aria-selected="false">Рост</button>
+  <button class="tab" role="tab" data-tab="plan" aria-selected="false">90 дней</button>
+  <button class="tab" role="tab" data-tab="fresh" aria-selected="false">Свежее</button>
 </nav>
 
 <main class="wrap">
 
-<!-- ЛИСТ 1 · РУБРИКАТОР -->
-<section id="sec-rubrics" role="tabpanel">
+<section id="sec-engine" role="tabpanel">
   <div class="sec-head">
-    <span class="code mono">Лист 1 · Рубрикатор</span>
-    <h2>10 рубрик — 10 несущих стен канала</h2>
+    <p class="eyebrow">Движок</p>
+    <h2>Что я выкладываю сегодня</h2>
   </div>
-  <p class="sec-lede">Каждая рубрика решает одну психологическую задачу и имеет свой формат-флагман. Вместе они закрывают весь цикл: охват → доверие → прогрев → заявка. Не запускайте все сразу — начните с Р-01, Р-03 и Р-06, они дают охваты быстрее всего.</p>
-  <div class="rgrid" id="rgrid"></div>
+  <p class="sec-lede">Главный враг ежедневного постинга — не отсутствие идей, а выбор. Жмите кнопку: движок соберёт готовое задание на сегодня — формат, сюжет, промпт, хук и подпись. Дальше только сгенерировать и выложить.</p>
+
+  <div class="engine">
+    <div class="reel" id="reel">
+      <div class="reel-top"><span id="reelTop">задание не собрано</span><span id="reelDate"></span></div>
+      <p class="reel-empty" id="reelEmpty">Нажмите «Собрать задание» — и получите готовый ролик на сегодня</p>
+    </div>
+
+    <div class="panel">
+      <button class="btn" id="btnGen">⟳ Собрать задание на сегодня</button>
+      <button class="btn ghost" id="btnDone">✓ Отметить: выложил сегодня</button>
+      <div class="streakbox">
+        <h3>Последние 14 дней</h3>
+        <div class="grid-days" id="days"></div>
+        <p class="streak-note" id="note">Серия начинается с первого дня. Пропуск не обнуляет всё — обнуляет только серию.</p>
+      </div>
+      <div class="streakbox">
+        <h3>Правило дня</h3>
+        <p class="streak-note" id="rule"></p>
+      </div>
+    </div>
+  </div>
 </section>
 
-<!-- ЛИСТ 2 · БАНК ИДЕЙ -->
-<section id="sec-ideas" role="tabpanel" hidden>
+<section id="sec-formats" role="tabpanel" hidden>
   <div class="sec-head">
-    <span class="code mono">Лист 2 · Банк идей</span>
-    <h2>Конкретные ролики, готовые к съёмке</h2>
+    <p class="eyebrow">Форматы</p>
+    <h2>То, что залетает от миллиона</h2>
   </div>
-  <p class="sec-lede">Отмечайте снятое — прогресс сохраняется в этом браузере. Кнопка «Что снимать сегодня» выберет случайную неснятую идею с учётом фильтров.</p>
-  <div class="toolbar">
-    <button class="roulette" id="roulette" type="button">🎲 Что снимать сегодня</button>
-    <input type="search" id="q" placeholder="Поиск по идеям…" aria-label="Поиск по идеям">
-    <span class="progress mono" id="progress"></span>
-  </div>
-  <div class="chips" id="rubChips" role="group" aria-label="Фильтр по рубрике"></div>
-  <div class="chips" id="potChips" role="group" aria-label="Фильтр по типу"></div>
-  <div class="ideas" id="ideaList"></div>
-  <div class="empty" id="ideaEmpty" hidden>Ничего не нашлось — снимите фильтры или измените запрос.</div>
+  <p class="sec-lede">Виральность нейроролика — это не сюжет, а механика удержания. Ниже двенадцать конструкций, которые заставляют досмотреть и пересмотреть. Сюжет подставляется любой; работает именно каркас.</p>
+  <div class="frames" id="formatGrid"></div>
 </section>
 
-<!-- ЛИСТ 3 · ХУКИ -->
+<section id="sec-prompts" role="tabpanel" hidden>
+  <div class="sec-head">
+    <p class="eyebrow">Промпты</p>
+    <h2>Банк готовых промптов</h2>
+  </div>
+  <p class="sec-lede">Скопировали — вставили в Veo, Sora, Kling или Runway — получили ролик. Генерируйте на английском: модели понимают его точнее. Меняйте предмет и город на свои, каркас промпта оставляйте как есть.</p>
+  <div class="tools">
+    <input class="search" id="pSearch" type="search" placeholder="поиск по промптам…" aria-label="Поиск по промптам">
+    <div id="pFilters" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+  </div>
+  <div class="plist" id="promptList"></div>
+  <p class="empty" id="pEmpty" hidden>Ничего не нашлось — попробуйте другое слово.</p>
+</section>
+
 <section id="sec-hooks" role="tabpanel" hidden>
   <div class="sec-head">
-    <span class="code mono">Лист 3 · Хуки</span>
-    <h2>Первые 3 секунды решают всё</h2>
+    <p class="eyebrow">Хуки</p>
+    <h2>Первые полторы секунды</h2>
   </div>
-  <p class="sec-lede">Алгоритм показывает ролик миллионам только если первые зрители не свайпнули. Хук — это не «привет, я риелтор». Это удар: цифра, запрет, вызов или оборванная история.</p>
-  <div class="gen">
-    <span class="gen-label mono">Генератор хуков · нажмите и забирайте</span>
-    <p class="gen-out" id="genOut">Эта розетка обойдётся вам в 400 000 ₽. И застройщик об этом молчит.</p>
-    <button class="roulette" id="genBtn" type="button">⚡ Сгенерировать хук</button>
-  </div>
-  <div class="hgroups" id="hgroups"></div>
+  <p class="sec-lede">У нейроролика нет разгона: аномалия должна быть уже в первом кадре. Ниже — приёмы для первого кадра и подписи, которые превращают просмотр в подписку.</p>
+  <h3 style="font-family:var(--f-mono);font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-faint);margin:0 0 4px">Первый кадр</h3>
+  <div class="rows" id="hookRows"></div>
+  <h3 style="font-family:var(--f-mono);font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-faint);margin:44px 0 4px">Подпись и финальный кадр</h3>
+  <div class="rows" id="capRows"></div>
 </section>
 
-<!-- ЛИСТ 4 · ПСИХОЛОГИЯ -->
-<section id="sec-psy" role="tabpanel" hidden>
+<section id="sec-growth" role="tabpanel" hidden>
   <div class="sec-head">
-    <span class="code mono">Лист 4 · Психология</span>
-    <h2>Как продавать, не продавая</h2>
+    <p class="eyebrow">Рост</p>
+    <h2>Просмотры ≠ подписчики</h2>
   </div>
-  <p class="sec-lede">Люди ненавидят, когда им продают, — и обожают покупать. Задача контента: чтобы решение «хочу с этими ребятами» зритель принял сам, до первого касания с менеджером.</p>
-  <div class="pgrid" id="pgrid"></div>
+  <p class="sec-lede">Миллион просмотров можно собрать случайно, миллион подписчиков — нет. Подписываются не на ролик, а на обещание следующего. Десять правил, которые превращают залетевший ролик в растущий канал.</p>
+  <div class="rows" id="growthRows"></div>
 </section>
 
-<!-- ЛИСТ 5 · СИСТЕМА -->
-<section id="sec-system" role="tabpanel" hidden>
+<section id="sec-plan" role="tabpanel" hidden>
   <div class="sec-head">
-    <span class="code mono">Лист 5 · Система</span>
-    <h2>Конвейер, а не вдохновение</h2>
+    <p class="eyebrow">90 дней</p>
+    <h2>Дорога до первого миллиона</h2>
   </div>
-  <p class="sec-lede">Миллион просмотров — это не лотерея, а статистика: регулярность × сильный хук × досмотр. Один съёмочный день в неделю закрывает всю сетку.</p>
-
-  <div class="steps">
-    <div class="step"><span class="sn mono">Такт 1 · 0–3 сек</span><h3>Хук</h3><p>Цифра-шок, запрет или вызов. Текст на экране дублирует голос — 70% смотрят без звука.</p></div>
-    <div class="step"><span class="sn mono">Такт 2 · 3–20 сек</span><h3>Удержание</h3><p>Каждые 3–5 секунд — новый кадр, факт или счётчик на экране. Ни одной «мёртвой» секунды.</p></div>
-    <div class="step"><span class="sn mono">Такт 3 · финал</span><h3>Пейофф</h3><p>Обещание хука выполнено полностью. Обманутый зритель не возвращается никогда.</p></div>
-    <div class="step"><span class="sn mono">Такт 4 · титры</span><h3>Открытая петля</h3><p>«В следующей серии вскрываем стяжку» — и прикреплённый комментарий с целевым действием.</p></div>
-  </div>
-
-  <div class="sec-head"><h2 style="font-size:1.2rem">Недельная сетка</h2></div>
-  <p class="sec-lede">7 выходов в неделю, из них продающих — максимум два. Остальное кормит алгоритм.</p>
-  <div class="tblwrap">
-    <table>
-      <thead><tr><th>День</th><th>Рубрика</th><th>Зачем именно здесь</th></tr></thead>
-      <tbody>
-        <tr><td class="mono"><span class="day">ПН</span>Ликбез-60</td><td>Р-09 · деньги и ловушки</td><td>Понедельник — день «полезного» настроения: максимум сохранений, они тянут ролик 2–3 дня.</td></tr>
-        <tr><td class="mono"><span class="day">ВТ</span>Ревизор</td><td>Р-01 · приёмка, флагман</td><td>Главная экспертная рубрика выходит, когда аудитория уже разогрета сохранениями понедельника.</td></tr>
-        <tr><td class="mono"><span class="day">СР</span>Строй-ASMR</td><td>Р-06 · процесс</td><td>Середина недели — усталость, залипательный контент без смысловой нагрузки досматривают на 90%+.</td></tr>
-        <tr><td class="mono"><span class="day">ЧТ</span>Угадай цену</td><td>Р-03 · интерактив</td><td>Комментарии четверга разгоняют охват к пятнице — алгоритм любит споры о деньгах.</td></tr>
-        <tr><td class="mono"><span class="day">ПТ</span>Внутрянка</td><td>Р-10 · сериал офиса</td><td>Пятница — время развлечений: скетчи и «риелтор слышит всё» шерят в чаты выходного дня.</td></tr>
-        <tr><td class="mono"><span class="day">СБ</span>До/После</td><td>Р-02 · трансформации</td><td>В выходной смотрят дольше — сюда ставим самые красивые и длинные трансформации.</td></tr>
-        <tr><td class="mono"><span class="day">ВС</span>Люди и метры</td><td>Р-05 · эмоции + мягкая продажа</td><td>Вечер воскресенья — люди мечтают о своей квартире. Единственный день с прямым CTA.</td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div class="sec-head"><h2 style="font-size:1.2rem">Правила цеха</h2></div>
-  <p class="sec-lede" style="margin-bottom:20px">Проверено сорока годами продакшена. Нарушать можно — но осознанно.</p>
-  <div class="rules">
-    <div class="rule"><h3>80 / 20</h3><p>8 роликов кормят алгоритм, 2 продают. Канал из одних «купите у нас» умирает за месяц — его хоронят сами зрители свайпом.</p></div>
-    <div class="rule"><h3>1 день = 7 роликов</h3><p>Один съёмочный день в неделю: один объект даёт Ревизора, ASMR, Угадай цену и До/После одновременно. Снимаем вертикально, свет — окно.</p></div>
-    <div class="rule"><h3>Метрика №1 — досмотр</h3><p>До 60 сек держим досмотр выше 70%. Просмотры — следствие. Лайки — тщеславие. Сохранения и шеры — деньги.</p></div>
-    <div class="rule"><h3>Переснимайте хук, не ролик</h3><p>Если ролик не полетел — в 9 случаях из 10 виноваты первые 3 секунды. Тот же материал с новым хуком — это новый ролик.</p></div>
-    <div class="rule"><h3>Лица важнее логотипа</h3><p>Люди подписываются на прораба Саныча и дерзкую Настю-приёмщицу, а не на ООО. Постоянные персонажи = сериальность = подписка.</p></div>
-    <div class="rule"><h3>Правило одного нуля</h3><p>Из 30 роликов один соберёт больше, чем остальные 29 вместе. Его формат немедленно превращаем в рубрику и повторяем, пока работает.</p></div>
-  </div>
+  <p class="sec-lede">Три этапа по тридцать дней. Порядок здесь важен: пока не найден свой формат, бессмысленно масштабировать, а пока нет серии — бессмысленно гнать трафик.</p>
+  <div class="phases" id="phaseGrid"></div>
 </section>
 
-<!-- ЛИСТ 6 · СВЕЖЕЕ -->
 <section id="sec-fresh" role="tabpanel" hidden>
   <div class="sec-head">
-    <span class="code mono">Лист 6 · Свежее</span>
+    <p class="eyebrow">Свежее</p>
     <h2>Ночные поставки идей</h2>
   </div>
-  <p class="sec-lede">Каждую ночь в 00:00 цех подвозит свежую партию: новые идеи под тренды и сезон. Новое — сверху, с датой поставки. Понравившееся забирайте в работу, остальное само уйдёт в архив ленты.</p>
+  <p class="sec-lede">Каждую ночь в 00:00 сюда падает новая партия идей под текущие тренды и сезон. Новое — сверху.</p>
   <div id="freshList"></div>
 </section>
 
-<!-- ЛИСТ 7 · НЕЙРО-РОЛИКИ -->
-<section id="sec-neuro" role="tabpanel" hidden>
-  <div class="sec-head">
-    <span class="code mono">Лист 7 · Нейро-ролики</span>
-    <h2>То, что нельзя снять камерой</h2>
-  </div>
-  <p class="sec-lede">Идеи для генерации в нейросетях — Veo, Sora, Runway, Kling, Midjourney. Такие ролики останавливают скролл, потому что мозг не понимает, как это снято. К каждой идее — заготовка промпта: генерируйте на английском, добавляйте «vertical 9:16, photorealistic, 4k» и детали вашего объекта.</p>
-  <div class="pgrid" id="neuroGrid"></div>
-</section>
 </main>
 
-<footer>
-  <div class="wrap mono">Контент-Цех · лист хранить постоянно · взамен инв. № — вдохновения</div>
+<footer class="wrap">
+  <span>Нейропоток · личный рабочий стол</span>
+  <span>Обновляется каждую ночь</span>
 </footer>
 
 <script>
 (function(){
   "use strict";
 
-  /* ---------- данные ---------- */
-  var RUBRICS = [
-    {c:"Р-01", n:"Ревизор", f:"2 / нед", what:"Приёмка квартир и экспертиза стройки: тепловизор, уровень, счётчик косяков на экране.", psy:"Страх потери + жажда справедливости", note:"«нас всех обманывают, а этот парень — на моей стороне». Флагман канала."},
-    {c:"Р-02", n:"До / После", f:"1 / нед", what:"Трансформации: убитая квартира → результат, с открытым бюджетом каждого этапа.", psy:"Визуальный дофамин", note:"мозг обожает завершённость. Цифры бюджета превращают залипание в доверие."},
-    {c:"Р-03", n:"Угадай цену", f:"1–2 / нед", what:"Интерактив: угадать цену по подъезду, найти отличие квартир за 3 и 30 млн.", psy:"Азарт + спор в комментариях", note:"каждый комментарий-ответ алгоритм читает как сигнал «покажи ещё людям»."},
-    {c:"Р-04", n:"Антириелтор", f:"1 / нед", what:"Разоблачение уловок рынка: переводчик с риелторского, ловушки объявлений и договоров.", psy:"Эффект «своего парня»", note:"покупают у того, кто предупредил об обмане, а не у того, кто красиво продал."},
-    {c:"Р-05", n:"Люди и метры", f:"1 / нед", what:"Истории клиентов: вручение ключей, путь к своей квартире, драмы сделок.", psy:"Эмпатия + социальное доказательство", note:"чужие слёзы счастья продают лучше любого оффера."},
-    {c:"Р-06", n:"Строй-ASMR", f:"1–2 / нед", what:"Залипательный процесс: идеальная штукатурка, укладка плитки, распаковка квартиры.", psy:"Сенсорное удовольствие", note:"досмотры 90%+ без единого слова — чистое топливо для алгоритма."},
-    {c:"Р-07", n:"Кинометры", f:"2 / мес", what:"Квартиры из кино, сериалов и клипов: сколько бы это стоило у нас на самом деле.", psy:"Заёмный интерес", note:"миллионы уже любят «Друзей» — мы просто встаём рядом с их любовью."},
-    {c:"Р-08", n:"Эксперимент", f:"2 / мес", what:"Тайный покупатель, прозвоны объявлений, соцэксперименты с ценами и арендой.", psy:"Любопытство + шок-ценность", note:"«а что будет, если…» — вопрос, который человек не может не досмотреть."},
-    {c:"Р-09", n:"Ликбез-60", f:"1–2 / нед", what:"Деньги за 60 секунд: ипотека, вычеты, задаток vs аванс, ловушки договоров.", psy:"Польза = сохранения", note:"сохранённый ролик алгоритм крутит несколько дней — это длинный хвост охвата."},
-    {c:"Р-10", n:"Внутрянка", f:"1 / нед", what:"Сериал про агентство: «риелтор слышит всё», сорванные сделки, стажёр, планёрки.", psy:"Парасоциальная связь", note:"зритель привязывается к персонажам и возвращается, как к сериалу."}
+  var FORMATS=[
+    {m:"петля",t:"Бесшовная петля",d:"Последний кадр совпадает с первым. Зритель пересматривает три-четыре раза и не замечает этого.",x:"Тест: если на стыке видно склейку — петли нет, ролик не работает."},
+    {m:"масштаб",t:"Невозможный масштаб",d:"Обычный предмет размером с дом или целый город в спичечном коробке. Мозг не может считать размер и заставляет палец остановиться.",x:"Тест: в кадре обязателен привычный объект-линейка — человек, машина, дверь."},
+    {m:"морфинг",t:"Перетекание",d:"Одно плавно превращается в другое: кот в тигра, город в лес, лицо через сто лет. Гипнотично и невозможно бросить до финальной формы.",x:"Тест: превращение должно быть непрерывным, без монтажной склейки посередине."},
+    {m:"разрез",t:"Разрез невозможного",d:"Нож проходит сквозь стекло, металл или планету как сквозь масло. ASMR плюс нарушение физики — самая надёжная связка на коротком видео.",x:"Тест: звук решает половину дела. Без хруста и шороха ролик теряет магию."},
+    {m:"характер",t:"Оживший предмет",d:"У обычных вещей появляется лицо и характер: чайник ворчит, дом зевает, кроссовки убегают. Самый широкий охват — заходит и детям, и взрослым.",x:"Тест: у предмета должна быть одна понятная эмоция, а не сюжет."},
+    {m:"точка съёмки",t:"POV изнутри",d:"Камера там, где человека быть не может: внутри капли, в стволе гитары, в глазу, между страниц книги.",x:"Тест: за восемь секунд камера должна пройти путь, а не просто повисеть."},
+    {m:"слом",t:"Твист на третьей секунде",d:"Обычный бытовой кадр, который внезапно ломается. Первые секунды — приманка узнаваемостью, дальше — причина досмотреть.",x:"Тест: до слома не больше трёх секунд, иначе уходят раньше развязки."},
+    {m:"время",t:"Машина времени",d:"Одна точка проходит через века: улица в 1900, 1950, 2000, 2100. Ностальгия плюс любопытство «а что дальше».",x:"Тест: точка съёмки не двигается — меняется только эпоха."},
+    {m:"существо",t:"Существо, которого нет",d:"Гибриды и новые животные, снятые с серьёзностью документалки BBC. Серьёзная подача выдуманного и есть шутка.",x:"Тест: снимайте как природный документальный фильм, а не как мультфильм."},
+    {m:"миниатюра",t:"Миниатюрный мир",d:"Tilt-shift: город становится игрушечным, люди — муравьями, пробка — детской железной дорогой.",x:"Тест: сильное размытие сверху и снизу кадра — без него эффект не читается."},
+    {m:"абсурд",t:"Гиперреалистичный абсурд",d:"Абсурдная идея, снятая как реклама за миллион долларов. Чем серьёзнее продакшн, тем смешнее результат.",x:"Тест: если идею можно снять в реальности — она недостаточно абсурдна."},
+    {m:"стихия",t:"Погодное чудо",d:"Невозможная погода в обычном месте: снегопад в комнате, гроза в стакане, туман в лифте.",x:"Тест: помещение должно быть подчёркнуто обычным — контраст и есть приём."}
   ];
 
-  var POTS = {viral:"🔥 виральный", sell:"💰 продающий", warm:"🧲 прогрев"};
+  var PROMPTS=[
+    {g:"петля",t:"Кофе, которое льётся вечно",d:"Чашка переполняется, кофе стекает со стола обратно в кофейник и по кругу.",p:"Coffee endlessly pouring from a pot into an overflowing cup, the spill flowing back up into the pot in a perfect seamless loop, warm morning kitchen light, macro details, photorealistic, vertical 9:16"},
+    {g:"петля",t:"Лестница без конца",d:"Обычный подъезд, по которому человек поднимается и оказывается там же.",p:"A person climbing an ordinary apartment stairwell that impossibly loops back to the same landing, Escher geometry, cold fluorescent light, seamless loop, photorealistic, vertical 9:16"},
+    {g:"петля",t:"Поезд въезжает сам в себя",d:"Состав уходит в тоннель и выезжает из собственного хвоста.",p:"A train entering a tunnel and emerging from its own last carriage, forming an endless moving ring, aerial view, misty morning, seamless loop, cinematic, vertical 9:16"},
+    {g:"петля",t:"Волна, которая не падает",d:"Океанская волна замирает в верхней точке и сворачивается обратно.",p:"A giant ocean wave curling forever without ever breaking, water rolling back into itself, golden hour backlight, slow motion, seamless loop, photorealistic, vertical 9:16"},
 
-  var IDEAS = [
-    /* Р-01 Ревизор */
-    {r:0,p:"viral",t:"«Принимаем квартиру за 12 млн — нашли 47 косяков»",d:"Счётчик дефектов в углу экрана тикает весь ролик. Финал — реакция застройщика на претензию."},
-    {r:0,p:"viral",t:"Тепловизор против застройщика",d:"Зимой светим стены новостройки: где утекает тепло — там горит оранжевым. Страшно, наглядно, шерится соседям по ЖК."},
-    {r:0,p:"viral",t:"Шарик против пола",d:"Кладём шарик на стяжку — он поехал. Три секунды, миллион просмотров: любой может повторить у себя, это и есть виральность."},
-    {r:0,p:"viral",t:"Что скрывает натяжной потолок",d:"Вскрываем потолок в квартире с «идеальным ремонтом от собственника». Хук: «Лучше бы мы этого не делали»."},
-    {r:0,p:"sell",t:"Чек-лист приёмки за 60 секунд",d:"10 пунктов с текстом на экране. CTA — «сохрани, пригодится на приёмке». Сохранения превращаются в заявки на услугу."},
-    {r:0,p:"viral",t:"«Застройщик просил это удалить»",d:"Подборка дефектов, которые отказались устранять. Название компании запикано — интрига работает сильнее фамилий."},
-    {r:0,p:"sell",t:"Сколько стоит НЕ позвать приёмщика",d:"Считаем на экране: невыявленные дефекты одной реальной квартиры = 380 000 ₽ ремонта. Услуга приёмки = 8 000 ₽."},
-    {r:0,p:"viral",t:"Приёмка глазами застройщика",d:"Перевёртыш-скетч: играем прораба, который «сдаёт» квартиру. «Трещина? Это дизайнерский шов». Юмор + экспертиза."},
-    /* Р-02 До/После */
-    {r:1,p:"viral",t:"Бабушкин ковёр → скандинавия за 400к",d:"Таймлапс со всплывающим ценником каждого этапа. Финальный кадр — сплитскрин было/стало с общей суммой."},
-    {r:1,p:"viral",t:"Самая убитая квартира города",d:"Хоррор-осмотр с фонариком: скрип, обои слоями, находки прежних жильцов. Потом — ремонт-сериал из этой квартиры."},
-    {r:1,p:"viral",t:"Хрущёвка 30 м²: было / стало / сколько",d:"Тройной формат: 10 сек «было», 10 сек «стало», 10 сек — смета крупно. Комментарии взорвутся спором о ценах — нам это и нужно."},
-    {r:1,p:"sell",t:"Одна стена — плюс 300 000 к цене",d:"Хоумстейджинг: перекрасили стену, поменяли свет, убрали хлам — квартира продалась дороже. Доказательство услуги предпродажной подготовки."},
-    {r:1,p:"warm",t:"Флип за 90 дней — открытая математика",d:"Сериал: купили убитую, ремонтируем, продаём. Все цифры честно: покупка, смета, налоги, прибыль. Подписка ради финала."},
-    {r:1,p:"viral",t:"До/после глазами кота",d:"Камера на высоте 20 см проезжает квартиру до ремонта и после. Нестандартный ракурс = остановка скролла. Кот обязателен."},
-    {r:1,p:"viral",t:"Что можно сделать за 10 000 ₽",d:"Микротрансформации одной зоны: свет, ручки, плинтус. «Дёшево и сердито» — самая недооценённая ниша, аудитория огромна."},
-    /* Р-03 Угадай цену */
-    {r:2,p:"viral",t:"Угадай цену по подъезду",d:"Показываем только подъезд и двор. Цена — в конце, после паузы. Зритель обязан досмотреть, чтобы проверить себя."},
-    {r:2,p:"viral",t:"Квартира за 3 млн vs за 30 млн",d:"Сплитскрин одинаковых сцен: кухня/кухня, санузел/санузел. «Найди 10 отличий». Комментарии: «за 30 — грабёж» — идеальный спор."},
-    {r:2,p:"viral",t:"Что выберет таксист / бабушка / банкир",d:"Показываем три квартиры людям разных профессий, они угадывают цены и выбирают. Кастинг из прохожих — дешевле и живее."},
-    {r:2,p:"viral",t:"Машина времени: цена в 2015 / 2020 / сейчас",d:"Одна и та же квартира, три цифры. Боль и ностальгия — самое комментируемое сочетание в недвижимости."},
-    {r:2,p:"viral",t:"Сколько метров влезает в 10 млн",d:"Одна сумма — Москва, Сочи, Дубай, райцентр. Карта и метры на экране. Формат бесконечно повторяемый с любыми суммами."},
-    {r:2,p:"viral",t:"Квартира идеальна. Найди подвох",d:"Всё прекрасно, цена подозрительно низкая. Финал: окна на крематорий / сосед-барабанщик / история квартиры. Рубрика-детектив."},
-    {r:2,p:"warm",t:"Угадал цену — попадёшь в следующий ролик",d:"Механика возврата: автора самого точного комментария показываем и разбираем его логику. Аудитория возвращается проверять."},
-    /* Р-04 Антириелтор */
-    {r:3,p:"viral",t:"Переводчик с риелторского",d:"«Уютная» = маленькая. «Тихий двор» = окна в стену. «Торг у собственника» = цена завышена. Серийный формат, простой продакшен."},
-    {r:3,p:"viral",t:"Фото в объявлении vs реальность",d:"Широкоугольник против честной камеры в одной и той же комнате. Показываем, как «делают» 20 лишних метров."},
-    {r:3,p:"viral",t:"Позвонил по 10 объявлениям-приманкам",d:"Сколько квартир из «слишком дешёвых» объявлений существует? Спойлер: одна. Записи звонков + счётчик на экране."},
-    {r:3,p:"viral",t:"5 фраз — и уходите с просмотра",d:"«Собственник за границей», «задаток сегодня, документы потом»… Каждая фраза = реальная схема обмана, коротко объясняем какая."},
-    {r:3,p:"viral",t:"Читаем договор вслух",d:"Медленно зачитываем пункт мелким шрифтом из реального договора. Пауза. «Вы только что подписали бы вот это». Тишина продаёт страховку от ошибки."},
-    {r:3,p:"sell",t:"Почему я отговорил клиента от покупки",d:"Кейс: нашли проблему, сделка отменена, клиент сохранил 6 млн. Продажа доверием — сильнейший конвертер подписчика в клиента."},
-    {r:3,p:"sell",t:"Скрипт торга, который сбил 700 000",d:"Разыгрываем диалог по ролям: фраза → контрфраза. Зритель забирает скрипт, а запоминает — кто умеет торговаться за него."},
-    /* Р-05 Люди и метры */
-    {r:4,p:"viral",t:"Реакция на ключи",d:"Подборка вручений ключей: слёзы, объятия, звонок маме. Ноль слов о компании — логотип на папке с документами скажет всё."},
-    {r:4,p:"warm",t:"Она копила 11 лет",d:"Путь клиентки от съёмной комнаты до своей студии. Интервью + хроника. Финал — первый завтрак в новой кухне."},
-    {r:4,p:"viral",t:"Развод. Кому достанется квартира?",d:"Анонимные реальные кейсы раздела недвижимости как мини-драмы с юридической развязкой. Люди обожают чужие имущественные споры."},
-    {r:4,p:"viral",t:"Наследство с сюрпризом",d:"Квартира в наследство: прописанный незнакомец, долги, вторая семья. Детективный сторителлинг с пользой в финале."},
-    {r:4,p:"warm",t:"Первая ночь в новой квартире",d:"Отдаём клиентам камеру на вечер переезда: пицца на коробках, матрас на полу, счастье. UGC-формат, честный и тёплый."},
-    {r:4,p:"viral",t:"Сосед сверху",d:"Истории про соседей, которые срывали и спасали сделки. Рубрика, в которую зрители сами понесут свои истории в комментарии."},
-    {r:4,p:"sell",t:"Один день с покупателем",d:"POV-день: 5 просмотров, сомнения, торг, решение. В финале — честный разбор, почему выбрали именно эту. Нативная витрина сервиса."},
-    /* Р-06 Строй-ASMR */
-    {r:5,p:"viral",t:"Идеальная штукатурка",d:"Правило идёт по стене, смесь срезается одним движением, звук живой. Без музыки, без слов. Залипание 100%."},
-    {r:5,p:"viral",t:"Заливка пола: 8 часов за 40 секунд",d:"Таймлапс + вставки реального звука. Финал — шарик, который больше никуда не катится (связка с Р-01)."},
-    {r:5,p:"viral",t:"Плиточник-снайпер",d:"Прирезка под углом, шов в шов, крестики щёлкают. Мастер молчит. Титр в конце: «29 лет опыта». Уважение = доверие бренду."},
-    {r:5,p:"viral",t:"Звук хорошего и плохого ремонта",d:"Простукиваем стену: звонко — пустота под плиткой, глухо — порядок. Зритель уходит проверять свою ванную. Это и есть шер."},
-    {r:5,p:"viral",t:"Распаковка квартиры",d:"Снимаем защитную плёнку с дверей, окон, техники — гигантский анбоксинг. Самый недооценённый satisfying-формат в недвижимости."},
-    {r:5,p:"viral",t:"POV: я — перфоратор",d:"День из жизни инструмента: камера на перфораторе, шуруповёрте, миксере. Абсурд + залипание = рецепт репостов."},
-    {r:5,p:"viral",t:"Последняя плитка",d:"Финальные штрихи объектов: последняя плитка, последний мазок, ключ входит в замок. Серия «идеальных концовок» — коллекционный формат."},
-    /* Р-07 Кинометры */
-    {r:6,p:"viral",t:"Сколько стоит квартира Моники из «Друзей»",d:"Восстанавливаем планировку, считаем метры и цену в нашем городе. Финал: «а теперь вспомните, кем она работала»."},
-    {r:6,p:"viral",t:"Хата из клипа",d:"Разбираем интерьер из свежего клипа топ-артиста: сколько стоит повторить. Ловим волну чужого хайпа в первые 48 часов."},
-    {r:6,p:"viral",t:"Чулан Гарри Поттера по нормам СНиП",d:"Экспертно оцениваем чулан под лестницей: метраж, вентиляция, можно ли прописать. Юмор + настоящие нормы = виральная смесь."},
-    {r:6,p:"viral",t:"Строим планировку из аниме/сериала",d:"Берём культовую квартиру, делаем реальный 3D-тур и смету. Фанаты приносят охват, мы показываем компетенцию."},
-    {r:6,p:"viral",t:"Где жил бы герой на свою зарплату",d:"Участковый из сериала живёт в лофте? Считаем его реальную ипотеку и показываем настоящий вариант. Больно и смешно."},
-    {r:6,p:"viral",t:"Кухня-остров в хрущёвке",d:"Голливудская мечта против несущих стен: возможно ли вообще? Честный разбор с планировщиком. Спойлер: есть один способ."},
-    /* Р-08 Эксперимент */
-    {r:7,p:"viral",t:"Тайный покупатель",d:"Идём смотреть квартиры как обычные клиенты (без названий компаний). Фиксируем уловки и сервис. Рынок обсуждает неделю."},
-    {r:7,p:"viral",t:"Одна квартира — три объявления",d:"Публикуем один объект с тремя разными текстами и фото. Считаем звонки. Готовое доказательство, что упаковка решает."},
-    {r:7,p:"viral",t:"Неделя в студии 18 м²",d:"Челлендж: живём, работаем, готовим, принимаем гостей. Честный вердикт: кому подходит, кому — ни за что."},
-    {r:7,p:"viral",t:"100 человек: сколько стоит ваш метр?",d:"Спрашиваем прохожих, сколько стоит метр в их доме, сверяем с рынком. Разброс ответов — готовый вирусный монтаж."},
-    {r:7,p:"viral",t:"Сдадут ли квартиру с котом?",d:"Прозвон 30 арендодателей: кот, собака, двое детей, студент. Честная статистика отказов. Каждый арендатор пришлёт это другу."},
-    {r:7,p:"viral",t:"Выставили на 20% дороже рынка",d:"Что будет с переоценённой квартирой: сколько звонков, какие торги, когда сдался продавец. Лечим главную боль собственников."},
-    {r:7,p:"sell",t:"Продадим за 30 дней или покажем всё",d:"Публичный челлендж с реальным объектом: вся кухня продажи в ежедневных сериях. Провал тоже контент — честность подкупает."},
-    /* Р-09 Ликбез-60 */
-    {r:8,p:"viral",t:"Ипотека на 30 лет: реальная сумма",d:"Первая секунда — итоговая цифра крупно. Потом объяснение и как сократить переплату на треть. Цифра-шок = стоп-скролл."},
-    {r:8,p:"viral",t:"3 пункта договора, из-за которых теряют квартиры",d:"Каждый пункт — реальная история в одно предложение. CTA: «сохрани, покажешь юристу». Сохранения = длинный охват."},
-    {r:8,p:"viral",t:"Государство должно вам 650 000 ₽",d:"Налоговый вычет, о котором забывает половина покупателей. Пошагово за 60 секунд. Самый шерибельный ликбез в нише."},
-    {r:8,p:"viral",t:"Маткапитал: 4 ошибки",d:"Ошибки, из-за которых сделки разворачивают через годы. Целевая аудитория — родители — самая активная в шерах."},
-    {r:8,p:"sell",t:"Проверка квартиры за 15 минут",d:"Что проверить до задатка: выписки, долги, прописанные. В финале — «или пришлите адрес нам, проверим бесплатно». Лидген в чистом виде."},
-    {r:8,p:"viral",t:"Аванс vs задаток: слово за 100 000 ₽",d:"Два слова, которые путают все — и теряют деньги. Разница на пальцах за 40 секунд. Вечнозелёный ролик, будет собирать годами."},
-    {r:8,p:"warm",t:"Прогноз цен с проверкой",d:"Ежемесячно: «что будет с ценами» + честная сверка прошлого прогноза. Смелость признавать промахи строит репутацию лучше побед."},
-    /* Р-10 Внутрянка */
-    {r:9,p:"viral",t:"Риелтор слышит всё",d:"Скетчи по реальным репликам клиентов: «а можно без документов, но надёжно?». Отраслевой юмор шерят и клиенты, и конкуренты."},
-    {r:9,p:"viral",t:"Сделка сорвалась за час до подписания",d:"Сторителлинг у окна офиса: живой рассказ, одна склейка, реальная развязка. Формат «байки из цеха» — дешевле некуда, работает всегда."},
-    {r:9,p:"viral",t:"Сколько зарабатывает риелтор",d:"Честные цифры: комиссия, расходы, месяцы без сделок. Самая кликабельная тема ниши — и фильтр адекватных кандидатов в команду."},
-    {r:9,p:"warm",t:"Планёрка без цензуры",d:"60 секунд настоящей планёрки: споры об объекте, разбор провала. Люди любят подглядывать за работой — дайте им щёлочку."},
-    {r:9,p:"warm",t:"POV: день агента",d:"12 показов, 40 звонков, одна сделка. Камера от первого лица, счётчики на экране. Уважение к профессии = доверие к компании."},
-    {r:9,p:"viral",t:"Самый странный запрос месяца",d:"«Ищу квартиру, где не было ссор» — ежемесячная рубрика. Зрители начнут присылать свои истории — контент делает сам себя."},
-    {r:9,p:"warm",t:"Стажёр против сделки",d:"Реалити: новичок ведёт первую сделку, наставник комментирует. Открытая петля в каждой серии — подписка ради развязки."}
+    {g:"масштаб",t:"Кроссовок размером с дом",d:"Гигантская кроссовка стоит на городской площади, вокруг ходят люди.",p:"A giant sneaker the size of a building standing in a city square, tiny people walking around it for scale, overcast daylight, hyperrealistic, vertical 9:16"},
+    {g:"масштаб",t:"Город в аквариуме",d:"Целый мегаполис живёт внутри аквариума на столе.",p:"A tiny living city inside a glass aquarium on a desk, cars moving, windows lit, fish swimming above the skyscrapers, macro photography, shallow depth of field, vertical 9:16"},
+    {g:"масштаб",t:"Кот выше многоэтажки",d:"Огромный кот спокойно лежит на набережной среди домов.",p:"A colossal domestic cat calmly lying along a city embankment, taller than the surrounding apartment buildings, people watching from below, overcast light, photorealistic, vertical 9:16"},
+    {g:"масштаб",t:"Человек на ладони",d:"Гигантская рука держит крошечного человека, который идёт по ней.",p:"A giant human hand holding a tiny person walking across the palm, realistic skin texture, dramatic side light, dark background, macro scale contrast, vertical 9:16"},
+    {g:"масштаб",t:"Луна за окном",d:"Луна занимает всё окно обычной кухни.",p:"An enormous moon filling the entire window of an ordinary kitchen, its craters visible in detail, dim interior, cinematic contrast, photorealistic, vertical 9:16"},
+
+    {g:"морфинг",t:"Кот становится тигром",d:"Домашний кот на подоконнике плавно превращается в тигра.",p:"A house cat on a windowsill slowly morphing into a full-size tiger, fur pattern and muscles transforming continuously, no cuts, natural daylight, photorealistic, vertical 9:16"},
+    {g:"морфинг",t:"Город прорастает лесом",d:"Мегаполис плавно зарастает деревьями и превращается в лес.",p:"A dense city skyline continuously morphing into an ancient forest, buildings turning into trees, roads into rivers, seamless transformation, aerial view, cinematic, vertical 9:16"},
+    {g:"морфинг",t:"Лицо через сто лет",d:"Молодое лицо плавно стареет до глубокой старости за восемь секунд.",p:"A young face aging continuously from twenty to ninety years old in one unbroken shot, skin and hair transforming smoothly, neutral studio light, photorealistic portrait, vertical 9:16"},
+    {g:"морфинг",t:"Из чертежа в дом",d:"Синие линии чертежа поднимаются с бумаги и становятся домом.",p:"Blue blueprint lines lifting off paper and rising into a glowing three-dimensional building that fills with real materials, holographic to photoreal transition, dark background, vertical 9:16"},
+
+    {g:"разрез",t:"Стеклянный фрукт",d:"Нож разрезает яблоко, которое внутри оказывается стеклянным.",p:"A knife slowly slicing through an apple that turns out to be solid glass inside, crystal cross-section catching light, crisp cutting sound, macro, photorealistic, vertical 9:16"},
+    {g:"разрез",t:"Разрез планеты",d:"Гигантский нож разрезает Землю как торт.",p:"A giant knife slicing through planet Earth like a layered cake, revealing glowing molten core layers, space background, hyperrealistic scientific detail, vertical 9:16"},
+    {g:"разрез",t:"Металл как масло",d:"Нож проходит сквозь стальной шар без сопротивления.",p:"A kitchen knife effortlessly slicing a solid steel ball like soft butter, mirror-polished cut surface, studio light on dark table, ASMR macro detail, vertical 9:16"},
+    {g:"разрез",t:"Внутри — целый город",d:"Разрезанный камень оказывается наполнен крошечным городом.",p:"A stone being cut open to reveal a tiny glowing city living inside it, miniature buildings and lights, macro photography, dramatic lighting, photorealistic, vertical 9:16"},
+
+    {g:"характер",t:"Ворчливый чайник",d:"Чайник с человеческим лицом недовольно бурчит на плите.",p:"An old kettle with a subtle expressive human-like face grumbling on a stove, steam puffing with its mood, cozy kitchen, Pixar-quality realism, vertical 9:16"},
+    {g:"характер",t:"Дом просыпается",d:"Многоэтажка потягивается и зевает утром, окна как глаза.",p:"An apartment building waking up at dawn, stretching slightly, windows blinking like sleepy eyes, warm sunrise light, whimsical photorealism, vertical 9:16"},
+    {g:"характер",t:"Кроссовки сбегают",d:"Пара кроссовок тихо убегает из прихожей, пока никто не видит.",p:"A pair of sneakers quietly sneaking out of a hallway on their own, moving like a cautious animal, night, motion blur, photorealistic, vertical 9:16"},
+    {g:"характер",t:"Уставший лифт",d:"Лифт тяжело вздыхает, поднимая слишком много людей.",p:"An elevator sighing heavily under too many passengers, its doors and panels subtly expressing exhaustion, fluorescent light, humorous photorealism, vertical 9:16"},
+
+    {g:"точка съёмки",t:"Внутри капли",d:"Камера летит внутри падающей капли воды.",p:"Camera traveling inside a single falling water droplet, refracted world visible through the surface, ultra slow motion, macro, photorealistic, vertical 9:16"},
+    {g:"точка съёмки",t:"В стволе гитары",d:"Полёт внутри акустической гитары во время игры.",p:"Camera flying inside an acoustic guitar body while it is being played, strings vibrating above, wood grain and dust, warm light through the sound hole, vertical 9:16"},
+    {g:"точка съёмки",t:"Глазами пчелы",d:"Полёт над цветочным полем глазами пчелы.",p:"Bee point of view flying low over a blooming field, fast erratic motion, ultra wide compound-eye distortion, sunlight, photorealistic, vertical 9:16"},
+    {g:"точка съёмки",t:"Между страниц",d:"Камера проходит между страницами открывающейся книги.",p:"Camera gliding between the pages of a giant opening book, paper towering like cliffs, dust particles in warm library light, cinematic, vertical 9:16"},
+
+    {g:"слом",t:"Обычное утро ломается",d:"Человек наливает кофе, и жидкость начинает литься вверх.",p:"A person pouring coffee in an ordinary kitchen when the liquid suddenly starts flowing upward to the ceiling, calm reaction, natural morning light, photorealistic, vertical 9:16"},
+    {g:"слом",t:"Отражение живёт своей жизнью",d:"Отражение в зеркале перестаёт повторять движения.",p:"A person looking in a bathroom mirror while their reflection stops copying them and moves independently, subtle unsettling delay, cold light, photorealistic, vertical 9:16"},
+    {g:"слом",t:"Гравитация выключилась",d:"В обычной комнате вещи начинают медленно всплывать.",p:"An ordinary living room where objects slowly begin floating upward as gravity fails, curtains rising, person calmly watching, natural light, photorealistic, vertical 9:16"},
+    {g:"слом",t:"Дождь идёт снизу вверх",d:"Улица под ливнем, который летит с земли в небо.",p:"A city street during heavy rain where every drop falls upward into the sky, pedestrians with inverted umbrellas, overcast light, photorealistic, vertical 9:16"},
+
+    {g:"время",t:"Улица через сто лет",d:"Один перекрёсток проходит через 1900, 1960, 2020 и 2120 годы.",p:"The same street corner transforming through 1900, 1960, 2020 and 2120, architecture and vehicles changing, camera locked in place, seamless timelapse, cinematic, vertical 9:16"},
+    {g:"время",t:"Комната взрослеет",d:"Детская превращается в подростковую, потом во взрослую спальню.",p:"A child's bedroom transforming continuously into a teenager's room and then an adult bedroom, furniture and posters morphing, fixed camera, warm light, vertical 9:16"},
+    {g:"время",t:"Дерево за минуту",d:"Дерево растёт от ростка до столетнего гиганта.",p:"A tree growing from a seedling into a hundred-year-old giant in one continuous shot, seasons cycling around it, fixed camera, cinematic timelapse, vertical 9:16"},
+
+    {g:"существо",t:"Кит в облаках",d:"Огромный кит плывёт между облаков над городом.",p:"A colossal whale swimming slowly through clouds above a city, birds circling it, golden hour, documentary realism, vertical 9:16"},
+    {g:"существо",t:"Лис с крыльями бабочки",d:"Документальные кадры лисицы с прозрачными крыльями.",p:"Nature documentary footage of a fox with translucent butterfly wings moving through a forest at dawn, BBC style cinematography, photorealistic, vertical 9:16"},
+    {g:"существо",t:"Каменный зверь",d:"Существо, сложенное из камней, просыпается в горах.",p:"A creature made of moss-covered boulders slowly waking up in a mountain valley, rocks shifting into limbs, overcast light, documentary realism, vertical 9:16"},
+
+    {g:"миниатюра",t:"Город-игрушка",d:"Мегаполис сверху выглядит как детский макет.",p:"Aerial view of a real city that looks like a miniature toy model, strong tilt-shift blur, tiny cars and people, bright daylight, photorealistic, vertical 9:16"},
+    {g:"миниатюра",t:"Пробка как железная дорога",d:"Автомобильная пробка похожа на детскую железную дорогу.",p:"A traffic jam filmed from above looking exactly like a toy train set, heavy tilt-shift effect, saturated colors, sunny day, vertical 9:16"},
+    {g:"миниатюра",t:"Стройка в песочнице",d:"Стройплощадка выглядит как игра в песочнице.",p:"A construction site from above resembling a child's sandbox with toy cranes and trucks, tilt-shift miniature effect, warm afternoon light, vertical 9:16"},
+
+    {g:"абсурд",t:"Реклама воздуха",d:"Дорогая реклама бутилированного воздуха, снятая как парфюм.",p:"A luxury perfume-style commercial for a bottle of ordinary air, slow motion product shots, dramatic studio lighting, ultra premium aesthetic, vertical 9:16"},
+    {g:"абсурд",t:"Показ мод для собак",d:"Настоящий модный показ, но все модели — собаки.",p:"A high fashion runway show where all the models are dogs in designer outfits, professional runway lighting, photographers flashing, hyperrealistic, vertical 9:16"},
+    {g:"абсурд",t:"Пельмени как ювелирка",d:"Обычная еда снята как реклама драгоценностей.",p:"Ordinary dumplings filmed like a luxury jewelry commercial, rotating on velvet, dramatic rim light, extreme macro detail, premium aesthetic, vertical 9:16"},
+    {g:"абсурд",t:"Утро миллиардера-кота",d:"Кот проживает утро успешного человека: кофе, костюм, машина.",p:"A cat living a billionaire morning routine: espresso, tailored suit, luxury car, filmed as a serious lifestyle documentary, photorealistic, vertical 9:16"},
+
+    {g:"стихия",t:"Снег в комнате",d:"В обычной гостиной идёт настоящий снегопад.",p:"Heavy snow falling inside an ordinary living room, snow settling on the sofa and table, person sitting calmly, soft cold light, photorealistic, vertical 9:16"},
+    {g:"стихия",t:"Гроза в стакане",d:"В стакане воды бушует настоящая гроза с молниями.",p:"A real thunderstorm raging inside a drinking glass on a table, tiny lightning bolts and clouds, macro photography, dark background, photorealistic, vertical 9:16"},
+    {g:"стихия",t:"Туман в лифте",d:"Двери лифта открываются, внутри — плотный туман и лес.",p:"Elevator doors opening to reveal dense fog and a forest inside the cabin, light beams through mist, eerie calm, photorealistic, vertical 9:16"},
+    {g:"стихия",t:"Океан за дверью",d:"За обычной межкомнатной дверью — океанские волны.",p:"An ordinary apartment door opening onto crashing ocean waves instead of a room, water held back by an invisible wall, dramatic light, photorealistic, vertical 9:16"}
   ];
 
-  var HOOK_GROUPS = [
-    {n:"Цифра-шок", why:"Конкретное число мозг обязан «допроверить» — свайп откладывается.", items:[
-      "Эта квартира подешевела на миллион, пока вы листали ленту.",
-      "47 косяков в квартире за 12 миллионов. Считаем вместе.",
-      "Ипотека на 30 лет — это 2,7 цены вашей квартиры. Доказываю.",
-      "Один звонок сбил цену на 700 000. Вот как он звучал."
-    ]},
-    {n:"Запрет и секрет", why:"Запретное знание — древнейший крючок: нельзя пройти мимо тайны.", items:[
-      "Застройщик попросил удалить это видео.",
-      "Риелторы ненавидят эту фразу. Скажите её на просмотре.",
-      "В договоре аренды есть пункт, который никто не читает. Зря.",
-      "Нам запретили показывать этот этаж. Показываю."
-    ]},
-    {n:"Вызов зрителю", why:"Брошенный вызов включает азарт — ответ пишут в комментарии, алгоритм ликует.", items:[
-      "Угадаете цену по подъезду — с меня разбор вашей квартиры.",
-      "Найдите в этом видео причину, почему её никто не покупает.",
-      "Поставьте на паузу и посчитайте косяки. Моё число — в конце.",
-      "Вы бы здесь жили? Отвечайте честно."
-    ]},
-    {n:"Оборванная история", why:"Незакрытая петля создаёт напряжение, которое снимается только досмотром.", items:[
-      "Мы вскрыли натяжной потолок. Лучше бы этого не делали.",
-      "Клиент отказался от сделки за час до подписания. Из-за одной бумаги.",
-      "Это самая дешёвая квартира города. И вот почему она никому не нужна.",
-      "Бабушка продавала квартиру 4 года. Мы нашли причину за 10 минут."
-    ]}
+  var SUBJECTS=["кот","старый чайник","городская площадь","подъезд панельки","чашка кофе","кроссовки","лифт","окно кухни","автобусная остановка","дерево во дворе","зеркало в ванной","детская площадка","мост через реку","библиотека","пустой стадион","заброшенный завод","парк осенью","рынок","метро в час пик","маяк"];
+
+  var HOOKS=[
+    {k:"аномалия",t:"Начните со сломанного кадра",d:"Не показывайте нормальное, чтобы потом сломать. Аномалия должна быть в первом кадре — палец останавливается на непонятном, а не на знакомом.",s:"Первый кадр: кот размером с дом уже лежит на площади."},
+    {k:"отсчёт",t:"Обещание на секунде",d:"Текстом на экране назовите момент, ради которого стоит досмотреть. Зритель ставит внутренний таймер и остаётся.",s:"«Смотрите на 6 секунде»"},
+    {k:"запрет",t:"Прямой запрет",d:"Запрет читается как вызов. Работает, только если дальше действительно есть что скрывать.",s:"«Не открывайте эту дверь»"},
+    {k:"невозможное",t:"Заявка на невозможное",d:"Скажите, что этого не существует. Зритель остаётся, чтобы поймать вас на лжи.",s:"«Этого места нет на карте»"},
+    {k:"вопрос",t:"Вопрос-ловушка",d:"Спросите, что не так в кадре. Зритель начинает искать — и досматривает до конца ради ответа.",s:"«Что здесь не так?»"},
+    {k:"цифра",t:"Числовой шок",d:"Одна конкретная цифра в первом кадре. Конкретика читается как факт и цепляет сильнее прилагательных.",s:"«8 секунд генерации. 0 рублей.»"},
+    {k:"незавершёнка",t:"Занесённый нож",d:"Начните с действия, которое вот-вот произойдёт. Мозг не выносит незавершённого движения.",s:"Нож занесён над стеклянным яблоком."},
+    {k:"узнавание",t:"Знакомое место",d:"Начните с предельно обычного кадра своего города. Узнавание держит ровно столько, сколько нужно до слома.",s:"«Это ваш двор. Смотрите, что будет»"}
   ];
 
-  var GEN = {
-    a:["Эта розетка","Этот пункт договора №4.2","Эта трещина на потолке","Этот «уютный» балкон","Эта квартира с идеальным ремонтом","Этот тихий зелёный двор","Эта скидка от застройщика","Этот бесплатный юрист застройщика","Это «выгодное» предложение","Этот вид из окна"],
-    b:["обойдётся вам в 400 000 ₽","съест половину вашей ипотеки","стоила моему клиенту квартиры","убьёт цену при перепродаже","превратит новостройку в вечный ремонт","заберёт ваш первоначальный взнос","добавит 6 лет к вашей ипотеке","сорвёт вам сделку в последний день"],
-    c:["И застройщик об этом молчит.","Риелтор вам этого не скажет.","В объявлении об этом ни слова.","Банк надеется, что вы не заметите.","Мы узнали об этом слишком поздно.","Досмотрите — покажу, как это проверить.","Проверяется за 30 секунд — показываю.","А теперь смотрите, как этого избежать."]
-  };
+  var CAPTIONS=[
+    {k:"петля дня",t:"Обещание на завтра",d:"Последний кадр — не финал, а анонс. Открытая петля превращает случайного зрителя в подписчика: он остаётся ради продолжения.",s:"«Завтра — часть 2: то же самое, но под водой»"},
+    {k:"промпт",t:"Промпт по запросу",d:"Самый сильный конвертер для нейроконтента. Промпт в закрепе или в ответ на комментарий — это и комментарии, и сохранения, и подписки одним приёмом.",s:"«Промпт — в закрепе. Повторите и покажите, что вышло»"},
+    {k:"сохранение",t:"Причина сохранить",d:"Сохранения алгоритм ценит выше лайков. Дайте прямую причину вернуться к ролику.",s:"«Сохраните — пригодится, когда дойдут руки»"},
+    {k:"спор",t:"Посаженный спор",d:"Заложите в подпись утверждение, с которым половина не согласится. Спор в комментариях — бесплатное топливо охвата.",s:"«Через год так будут снимать все. Кто против?»"},
+    {k:"серия",t:"Номер выпуска",d:"Нумерация превращает разрозненные ролики в сериал. Зритель подписывается на серию, а не на видео.",s:"«Невозможные места · выпуск 14»"},
+    {k:"соучастие",t:"Заказ из комментариев",d:"Просите называть, что сгенерировать следующим. Зритель, чью идею взяли, приводит своих.",s:"«Пишите, что сгенерировать завтра — беру верхний комментарий»"}
+  ];
+
+  var GROWTH=[
+    {k:"профиль",t:"Профиль — это посадочная страница",d:"На неё приходят после залетевшего ролика и решают за две секунды. В имени — ключевое слово, в описании — одно обещание вместо списка регалий.",s:"«Каждый день — один нейроролик, которого не существует»"},
+    {k:"закреп",t:"Три закрепа — это доказательство",d:"Первые три закреплённых ролика отвечают на вопрос «что я получу, если подпишусь». Ставьте туда не самые залетевшие, а самые типичные для канала."},
+    {k:"серия",t:"Подписываются на серию, не на ролик",d:"Один гениальный ролик даёт просмотры и ноль подписчиков. Нумерованная серия даёт меньше просмотров на видео и в разы больше подписок."},
+    {k:"финал",t:"Последний кадр решает",d:"Именно там зритель либо уходит, либо подписывается. Не заканчивайте на затухании — заканчивайте на обещании следующего."},
+    {k:"ритм",t:"Ритм важнее качества",d:"Один ролик в день девяносто дней подряд сильнее, чем десять шедевров за квартал. Алгоритм доверяет тем, кто не пропадает."},
+    {k:"хук",t:"Переснимайте хук, а не ролик",d:"Если видео не пошло, в девяти случаях из десяти виноваты первые полторы секунды. Замените первый кадр и выложите заново через неделю."},
+    {k:"повтор",t:"Свои хиты — повторно",d:"Через три недели пересоберите залетевший ролик с другим предметом. Алгоритм считает это новым, аудитория — узнаваемым."},
+    {k:"сигналы",t:"Сохранения и пересылки выше лайков",d:"Лайк ничего не стоит и почти ничего не значит. Стройте ролики так, чтобы их хотелось отправить конкретному человеку."},
+    {k:"комментарии",t:"Отвечайте первый час",d:"Первый час после публикации решает судьбу ролика. Ответы в комментариях в этот час напрямую разгоняют охват."},
+    {k:"лицо",t:"Один человек — это преимущество",d:"Студию не с кем ассоциировать, а с вами можно. Показывайте процесс: неудачные генерации, кривые руки нейросети, выбор из десяти дублей."}
+  ];
+
+  var PHASES=[
+    {n:"01",t:"Дни 1–30 · Фундамент",w:"цель: найти свой формат",l:["Один ролик в день без единого пропуска — это единственная метрика месяца","Проверить минимум шесть форматов из раздела «Форматы», по пять роликов на каждый","Не менять оформление профиля и не гнаться за трендами","К концу месяца — тридцать роликов и один, собравший заметно больше остальных"]},
+    {n:"02",t:"Дни 31–60 · Серия",w:"цель: первые 10 000 подписчиков",l:["Взять формат, который выстрелил, и сделать из него нумерованную серию","Промпт по запросу в закрепе каждого ролика — главный конвертер в подписку","Переснять хуки трёх лучших роликов первого месяца и выложить заново","Отвечать на все комментарии первый час после публикации"]},
+    {n:"03",t:"Дни 61–90 · Масштаб",w:"цель: ролик от миллиона",l:["Два ролика в день: утренний из серии, вечерний — эксперимент","Пересобрать три своих хита с новыми предметами","Взять три коллаборации с каналами похожего размера","Собрать лучшее в закреп — витрину для тех, кто придёт с миллионника"]}
+  ];
 
   /* Ночные поставки: новые записи добавлять В НАЧАЛО массива */
-  var FRESH = [
-    {date:"13.08.2026", items:[
-      {t:"Квартира по объявлению 20-летней давности",d:"Находим газету 2006 года и звоним по старым объявлениям: что стало с этими квартирами и как выросла цена. Машина времени в недвижимости — досмотр ради шокирующих цифр «тогда и сейчас»."},
-      {t:"Прошу дизайнеров спасти самую убитую квартиру",d:"Показываем катастрофу и просим трёх дизайнеров за 60 секунд предложить концепт. Соревнование идей плюс трансформация ужаса в мечту — сохраняют и голосуют за лучший вариант."},
-      {t:"Один этаж — три страны в интерьере",d:"На одной лестничной клетке находим квартиры в стиле разных стран: японский минимализм, французский шик, деревенский кантри. «Как за одной дверью — целый мир» держит до последней квартиры."}
-    ]},
-    {date:"12.08.2026", items:[
-      {t:"Квартира, которую нельзя купить ни за какие деньги",d:"Показываем объекты не на продажу: служебное жильё, музеи-квартиры, дома под охраной государства — и объясняем почему. Запретный плод «а если очень захотеть» держит до конца."},
-      {t:"Ставлю палатку в квартире перед покупкой",d:"Ночую в пустой квартире в палатке и по-настоящему проверяю: сквозняки, звуки труб, свет фонарей в окно. Абсурдная механика привлекает, а реальные выводы заставляют сохранить."},
-      {t:"Худший балкон vs лучший балкон одного дома",d:"В одной панельке находим балкон-помойку и балкон-оранжерею — сравниваем в сплитскрине. Контраст «а ведь одинаковые метры» разгоняет комментарии и мотивирует."}
-    ]},
-    {date:"11.08.2026", items:[
-      {t:"Квартира из фильма ужасов существует",d:"Находим реальные квартиры с планировкой как из хоррора: подвал без окон, длинный коридор, комната за зеркалом. На стыке кино и недвижимости — зритель досматривает, чтобы узнать цену «этого»."},
-      {t:"Собрал зарплаты подписчиков — какую квартиру потянут",d:"Анонимный опрос дохода в сторис, а потом на экране собираем среднюю квартиру аудитории канала. Соучастие зрителей в результате = максимум комментариев и репостов."},
-      {t:"Что за дверью с кодовым замком в подъезде",d:"Расследуем загадочные технические двери в обычных домах: бомбоубежище, серверная, забытая кладовка коменданта. Квест-любопытство «а что там» держит внимание до вскрытия тайны."}
-    ]},
-    {date:"10.08.2026", items:[
-      {t:"Понедельник: во сколько встаёт элитный дом и во сколько — панелька",d:"Сплитскрин двух подъездов утром буднего дня: кто выходит в костюме к машине, кто бежит на маршрутку. Социальный срез без слов бьёт по нервам и разгоняет спор в комментариях."},
-      {t:"Квартира, которую построили вокруг дерева",d:"Собираем архитектурные причуды: дом с деревом внутри, окно вокруг скалы, планировка под изгиб реки. Необычность останавливает скролл, а «так вообще можно?» держит до конца."},
-      {t:"Проверяю Wi-Fi и связь по всей квартире",d:"С приложением-спидтестом обходим объект: где пропадает интернет, где не ловит телефон, какие стены глушат сигнал. Боль цифрового поколения — сохраняют как обязательный пункт осмотра."}
-    ]},
-    {date:"09.08.2026", items:[
-      {t:"Квартира за 3 часа на поезде от Москвы",d:"Показываем, что можно купить в маленьких городах в трёх часах от столицы за цену московского санузла. Мечта «уехать из мегаполиса» на пике августа — сохраняют и шлют партнёру со словами «а давай?»."},
-      {t:"Как выглядит квартира риелтора",d:"Заходим домой к самим агентам: живут ли они в том, что продают, или в убитой однушке. Разрыв ожиданий и реальности — люди обожают подглядывать за теми, кто их учит."},
-      {t:"Один рубль ремонта — один процент к цене?",d:"Проверяем миф на реальных примерах: сколько реально добавляет к стоимости дорогой ремонт при продаже и когда он вообще не окупается. Разбор денег, который сохраняют все, кто собрался вкладываться."}
-    ]},
-    {date:"08.08.2026", items:[
-      {t:"Квартира, которую продают 10 лет",d:"Находим самое «долгоиграющее» объявление города и вскрываем причину: неадекватная цена, спорное наследство, роковой изъян. Детектив «почему её никто не берёт» держит до развязки."},
-      {t:"Дача как вторая квартира: честная математика",d:"Августовский пик: считаем, что выгоднее на длинной дистанции — дача за городом или студия под сдачу. Вечный спор дачников и инвесторов кормит комментарии выходного дня."},
-      {t:"Ремонт от бабушки против дизайнера",d:"Одна комната, два подхода: ковёр-стенка-серванты vs минимализм за те же деньги. Голосование в комментариях «где уютнее» сталкивает поколения и разгоняет охват."}
-    ]},
-    {date:"07.08.2026", items:[
-      {t:"Пятничный краш-тест агентов",d:"Звоним пяти агентствам с одинаковой легендой и сравниваем, кто перезвонит, кто нагрубит, кто реально поможет. Тайный аудит рынка в конце недели — зрители требуют «проверьте моего риелтора»."},
-      {t:"Квартира за стоимость свадьбы",d:"Сравниваем на экране: средний бюджет свадьбы vs первый взнос по ипотеке. Провокация «гуляем один день или живём всю жизнь» разносит комментарии на два лагеря."},
-      {t:"Что скрывает свежая краска",d:"Учим замечать косметику, которой прячут проблемы перед продажей: подтёки, плесень, трещины под новой шпаклёвкой. Зритель сохраняет как чек-лист и идёт перепроверять свою будущую сделку."}
-    ]},
-    {date:"06.08.2026", items:[
-      {t:"Квартира с видом на… соседа в трусах",d:"Едем по объектам с рекламным «панорамным видом» и показываем, что видно на самом деле: окна напротив, стройку, гаражи. Разоблачение красивых слов бьёт в каждого, кто выбирал по фото."},
-      {t:"Съехал за 24 часа: реалити переезда",d:"Челлендж: полностью переехать из старой квартиры в новую за сутки, со счётчиком коробок и нервов. Динамика и знакомый всем стресс переезда держат до финального ключа."},
-      {t:"Дом, где не гаснет ни одно окно",d:"Снимаем вечерний фасад и разбираем, почему в одних ЖК окна светятся, а в других — темнота: заселённость, инвест-квартиры, апартаменты-пустышки. Инсайдерский приём оценки района без риелтора."}
-    ]},
-    {date:"05.08.2026", items:[
-      {t:"Квартира за криптовалюту: реально ли",d:"Разбираем реальную сделку с оплатой в крипте: как оформить, где подвох, законно ли вообще. Хайповая тема на стыке двух аудиторий — недвижимости и крипты — собирает споры и сохранения."},
-      {t:"Что находят при сносе стен",d:"Подборка находок из-под старой отделки: замурованные двери, тайники, письма, деньги, странные надписи. Реальный клад в стене — зритель досматривает ради «а вдруг там миллион»."},
-      {t:"Однушка или студия: слепой тест на комфорт",d:"Селим двух человек с одинаковым бытом — одного в студию, другого в однушку той же площади — и через сутки сравниваем. Развенчиваем миф «студия = то же самое», разгоняем спор планировщиков."}
-    ]},
-    {date:"04.08.2026", items:[
-      {t:"Квартира знаменитости: до того, как разбогател",d:"Находим первое жильё известных людей — комнату в общаге, съёмную однушку — и показываем, откуда стартовали. Заёмный интерес плюс мотивация «все начинали с малого» тащат репосты."},
-      {t:"Один и тот же метраж в 5 странах",d:"Что даёт 40 м² в Москве, Тбилиси, Стамбуле, Дубае и Бали за одни деньги. Карта и сравнение на экране — вечный формат для тех, кто мечтает о переезде, спорят в комментах до ночи."},
-      {t:"Ремонт вслепую: доверься мастеру на день",d:"Отдаём комнату бригаде без единого указания и снимаем, что получится. Азарт «а вдруг испортят» держит до финального раскрытия — переснимаемый сериальный формат."}
-    ]},
-    {date:"03.08.2026", items:[
-      {t:"За месяц до школы: гонка за квартирой у гимназии",d:"Понедельник, август: показываем, как родители в последний момент штурмуют аренду и покупку рядом с сильными школами, и сколько это реально стоит. Родительская паника перед 1 сентября = максимум сохранений."},
-      {t:"Квартира-пенал: как жить в 2,5 метра шириной",d:"Обзор самых узких реальных квартир и лайфхаки, как их обжить. Абсурдная планировка останавливает скролл, а практичные советы заставляют досмотреть и сохранить."},
-      {t:"Тайные комнаты в обычных квартирах",d:"Находим квартиры со скрытыми помещениями: кладовка за шкафом, антресоль-кабинет, комната без окон на плане. Формат-квест, в котором зритель ждёт «а что там дальше»."}
-    ]},
-    {date:"02.08.2026", items:[
-      {t:"Квартира, которую нельзя фотографировать",d:"Объекты, где собственники запрещают съёмку интерьера, — выясняем почему: секретный ремонт, звёздные соседи, охрана. Запрет в кадре мгновенно включает любопытство, а разгадка держит до конца."},
-      {t:"Балкон-огород: урожай против рынка",d:"В разгар августа собираем урожай с балконных грядок и считаем, окупается ли городское огородничество или проще купить. Сезонная тема разносится по чатам дачников и городских экспериментаторов."},
-      {t:"Слепой выбор соседей",d:"Показываем зрителям только двери и коврики на этаже — угадайте, кто за какой живёт: студент, семья, бабушка, айтишник. В финале знакомим с жильцами. Игра в детектива тащит комментарии."}
-    ]},
-    {date:"01.08.2026", items:[
-      {t:"Покупаем квартиру у моря на зарплату из глубинки",d:"Августовский сезон отпусков: считаем, реально ли жителю региона взять студию в Сочи или Крыму и сдавать её отдыхающим. Мечта «свой угол у моря» на пике спроса — сохраняют и пересылают всей семье."},
-      {t:"Школа под окном: благо или ад",d:"За месяц до 1 сентября разбираем квартиры у школ: плюс к цене или минус к нервам от шума и парковки. Родительская аудитория самая активная — комментарии заполнят обе стороны спора."},
-      {t:"Август — месяц скидок на квартиры?",d:"Проверяем миф: правда ли перед осенью продавцы сговорчивее, и как выбить скидку в мёртвый сезон. Практичный разбор в начале месяца ловит всех, кто отложил покупку на осень."}
-    ]},
-    {date:"31.07.2026", items:[
-      {t:"Квартира с призраком в объявлении",d:"Собираем объекты, где продавцы честно (или в шутку) пишут про «странности»: скрипы, историю, прежних жильцов. На стыке хоррора и недвижимости — зритель не может не досмотреть, чем кончится осмотр."},
-      {t:"Итоги июля: что подорожало и подешевело",d:"Быстрая сводка месяца по районам с цифрами на экране: где цены выросли, где просели, что брать в августе. Полезная аналитика в конце месяца собирает максимум сохранений и пересылок инвесторам."},
-      {t:"Ремонт по фэншуй против логики",d:"Приглашаем мастера фэншуй и планировщика в одну квартиру — они спорят, где ставить кровать и дверь. Столкновение эзотерики и здравого смысла разносит комментарии на два лагеря."}
-    ]},
-    {date:"30.07.2026", items:[
-      {t:"Квартира за 1 рубль: где подвох",d:"Разбираем реальные объявления с шок-ценой в рубль или доллар: аукцион, торги от, ошибка или развод. Кликбейт-цена в кадре останавливает скролл, а разбор схемы удерживает до конца."},
-      {t:"Провожу ночь в квартире перед покупкой",d:"Договариваемся с продавцом остаться на ночь: как спится, что слышно, во сколько бьёт солнце, шумит ли лифт. Формат, до которого никто не додумался, — сохраняют как гениальный лайфхак."},
-      {t:"Реновация: до сноса осталось…",d:"Заходим в дома под снос за неделю до расселения: как живут последние жильцы, что забирают, что бросают. Уходящая натура плюс эмоции прощания с домом — досмотр и слёзы в комментариях гарантированы."}
-    ]},
-    {date:"29.07.2026", items:[
-      {t:"Собираем квартиру в The Sims и в жизни",d:"Строим реальную планировку клиента в игре, а потом показываем её вживую — сплитскрин пиксельной мечты и настоящих метров. Ностальгия по Sims тащит миллениалов, узнавание планировки — всех остальных."},
-      {t:"Сколько людей жило в этой квартире",d:"По документам и слоям обоев восстанавливаем историю жильцов одной квартиры за 60 лет: коммуналка, молодая семья, съём, наследство. Мини-сериал в стенах — досмотр ради каждой судьбы."},
-      {t:"Худшая планировка, которую я видел",d:"Ведущий с непроницаемым лицом ходит по квартире-катастрофе: туалет посреди кухни, окно в стену, спальня-пенал. Чем абсурднее объект, тем больше репостов «глянь на это»."}
-    ]},
-    {date:"28.07.2026", items:[
-      {t:"Квартира дешевле машины",d:"Находим реальные объекты по цене нового кроссовера: где, что и почему так дёшево. Провокационное сравнение бьёт по всем, кто копит на авто, — сохраняют и спорят «лучше квартира в глуши или тачка»."},
-      {t:"Тест воды из-под крана по этажам",d:"Наливаем воду на 2-м и на 24-м этаже одного дома, смотрим напор, цвет, осадок. Бытовая деталь, о которой не думают при покупке, — зритель бежит проверять свой кран и тэгает домочадцев."},
-      {t:"Что стало с ЖК из рекламы 5 лет назад",d:"Находим глянцевый ролик застройщика пятилетней давности и едем на тот же адрес: сбылись ли обещания про парк, школу и фонтан. Разоблачение обещаний — формат, который дольщики разносят по чатам."}
-    ]},
-    {date:"27.07.2026", items:[
-      {t:"Понедельник: во сколько реально просыпается район",d:"Ставим камеру на окно и таймлапсим утро буднего дня: когда зажигается свет, во сколько пробка на выезд, где давка у метро. Каждый сверяет со своим утром — узнавание тащит охват на старте недели."},
-      {t:"Квартира, которая пережила три кризиса",d:"История одного объекта через цены 2008, 2014, 2022 и сегодня: сколько стоила, кто владел, что с ней стало. Финансовая драма в стенах одной квартиры — досмотр ради «а сейчас-то почём»."},
-      {t:"Ремонт, который взбесил соседей",d:"Разбираем реальные истории войн из-за перепланировки: снесли несущую, залили соседей, шумели полгода. Каждый вспоминает своего соседа-ремонтника и несёт историю в комментарии."}
-    ]},
-    {date:"26.07.2026", items:[
-      {t:"Купили квартиру вслепую по видео",d:"Реальная сделка без единого личного просмотра — только наши видеообзоры. Снимаем весь путь и честный финал: совпало или нет с ожиданиями. Интрига «а вдруг обманут» держит до самой развязки."},
-      {t:"Рейтинг запахов подъезда",d:"С юмором и всерьёз: чем пахнет дорогой дом и чем — убитый, как запах на входе выдаёт цену квартиры лучше объявления. Зрители врываются в комментарии описывать свои подъезды."},
-      {t:"Двор мечты за 3 копейки",d:"Показываем, как жильцы сами преобразили унылый двор почти без денег: клумбы из шин уже немодны — а вот что реально работает. Воскресный вдохновляющий формат, который сохраняют «показать в чат дома»."}
-    ]},
-    {date:"25.07.2026", items:[
-      {t:"Пятница вечером: тест на шум района",d:"Приезжаем в один и тот же двор в будний полдень и в пятницу в 23:00 — сплитскрин тишины и реальности: бары, парковка на газоне, компании во дворе. Люди узнают свой район и тэгают тех, с кем там гуляли."},
-      {t:"Дача vs квартира: что выгоднее этим летом",d:"Живой эксперимент: неделя на даче и неделя в городской квартире с одинаковым бюджетом — считаем комфорт, расходы, дорогу. Вечный летний спор гарантирует сотни комментариев-защитников каждого лагеря."},
-      {t:"Квартира, где снимали клип",d:"Находим реальные квартиры из клипов и рекламы, показываем, сколько стоит арендовать их на съёмку в сутки и на месяц для жизни. Заёмный интерес плюс инсайд «а вот сколько это на самом деле» держат до конца."}
-    ]},
-    {date:"24.07.2026", items:[
-      {t:"Квартира по знаку зарплаты",d:"Не по знаку зодиака, а по доходу: показываем, какую квартиру реально тянет человек с зарплатой 50, 100, 200, 500 тысяч в вашем городе. Каждый мысленно примеряет свою строку — досмотр до «своей» цифры обеспечен."},
-      {t:"Слепой тест: новостройка или вторичка",d:"Показываем интерьеры без подписей, зрители в комментариях угадывают тип жилья, а мы вскрываем правду. Развенчиваем миф «вторичка = старьё» и собираем армию спорщиков."},
-      {t:"Один подъезд — пять эпох ремонта",d:"Проходим по этажам одного дома: от нетронутой бабушкиной квартиры до дизайнерского лофта. История вкусов страны в одном стояке — ностальгия и залипание в каждом кадре."}
-    ]},
-    {date:"23.07.2026", items:[
-      {t:"Квартира-невидимка: почему её не показывают",d:"Объект висит в базе полгода без единого фото. Едем и вскрываем причину: то ли жильцы-отказники, то ли вид на кладбище, то ли история. Формат-детектив, где развязка держит до конца."},
-      {t:"Сколько стоит воздух над городом",d:"Сравниваем цену одинаковых квартир на 3-м и 25-м этаже: за что реально доплачивают за высоту и окупается ли вид. Спор «этажность решает» вечен — комментарии разгоняют охват сами."},
-      {t:"Обход стройки в 6 утра",d:"Приходим на объект до начала смены: что прячут за баннером, как ночует техника, реальный темп работ без прикрас. Инсайдерский вайб «показываю то, что не должны» цепляет и дольщиков, и просто любопытных."}
-    ]},
-    {date:"22.07.2026", items:[
-      {t:"Что видит камера домофона в 3 ночи",d:"Нарезка типичной ночной жизни подъезда глазами домофона: кто курит на лестнице, кто крадёт коврики, кто ночует у батареи. Каждый узнаёт свой подъезд и тэгает соседей — узнавание тащит охват."},
-      {t:"Ремонт за цену айфона",d:"Челлендж: обновить комнату на сумму последнего флагмана — считаем каждый чек на экране. Вечная дилемма «телефон или уют» бьёт по молодой аудитории и провоцирует споры в комментах."},
-      {t:"Планировки-обманки: где вас надули",d:"Разбираем модные планировки, которые красиво выглядят на буклете, но не живут: спальня без окна, кухня-кишка, санузел у входной двери. Зритель сверяет со своей квартирой и сохраняет как чек-лист."}
-    ]},
-    {date:"21.07.2026", items:[
-      {t:"Квартира за банку варенья",d:"Реальные объявления-бартеры: меняют дачу на авто, комнату на ремонт, гараж на телефон. Показываем самые дикие обмены недвижимости — зритель не верит, что так можно, и досматривает до последнего."},
-      {t:"Тепловая карта цен: где кипит рынок",d:"Накладываем цены на карту города как погодную карту: красным — где перегрето, синим — где недооценено и пора брать. Наглядность плюс инсайдерский вайб «знаю, где выгодно» = массовые сохранения."},
-      {t:"Дом, который построили за выходные",d:"Таймлапс сборки модульного/каркасного дома от фундамента до крыши за 48 часов. Скорость завораживает, а комментарии взрываются вечным спором «а простоит ли» — алгоритму только это и надо."}
-    ]},
-    {date:"19.07.2026", items:[
-      {t:"Сверлить нельзя: карта часов тишины",d:"Воскресный ликбез: когда ремонт законен в вашем регионе, какой штраф за перфоратор в выходной и как оформить жалобу за 5 минут. Половина зрителей сохранит «на всякий», вторая — перешлёт соседу сверху."},
-      {t:"Секретные метры вашей квартиры",d:"Показываем, где в типовой квартире прячутся 2–3 «бесплатных» метра: ниши, антресоли, подоконник-стол, дверь-купе вместо распашной. Зритель встаёт с дивана проверять свой коридор — это и есть виральность."},
-      {t:"Квартира-сирота",d:"Детектив про выморочное жильё: что происходит с квартирой, у которой не нашлось наследников, и как город её забирает. Тема, о которой не знает 90% аудитории, — досмотр ради развязки гарантирован."}
-    ]},
-    {date:"18.07.2026", items:[
-      {t:"Дрон-ревизор над вашим ЖК",d:"Облетаем жилые комплексы с высоты: состояние крыш, парковочный хаос, что на самом деле за забором «закрытого двора». Зрители присылают адреса в комментарии — очередь на «прилетите к нам» кормит рубрику месяцами."},
-      {t:"Квартиру выбирает собака",d:"Подбор жилья глазами питомца: лифт или лестница, покрытие двора, где ближайший выгул, куда прячется кот при переезде. Пет-контент пробивает любые алгоритмы, а вывод «одобрено хвостом» — готовый мем."},
-      {t:"Квартира зарабатывает, пока вы в отпуске",d:"Реальный кейс: сдаём квартиру клиента посуточно на три недели его отпуска и показываем всю математику — от уборки до прибыли. Июльская мечта «отпуск окупился сам» заставляет сохранять и пересылать."}
-    ]},
-    {date:"17.07.2026", items:[
-      {t:"Капсула времени из 90-х",d:"Обзоры квартир, которые продаются со всей прожитой жизнью: сервант с хрусталём, ковёр, календарь 1997 года. Ностальгия плюс лёгкое подглядывание — комментарии превращаются в вечер воспоминаний."},
-      {t:"Разведка соседей до покупки",d:"Показываем, как пробить соседей заранее: домовой чат, объявления в лифте, разговор с консьержем, вечерний визит в будний день. Страх «соседа с перфоратором» знаком каждому — сохранения летят сами."},
-      {t:"Инспекция детской площадки",d:"Взрослые всерьёз тестируют дворы ЖК: качели на скрип, резину на отскок, тень в полдень, камеры. Родители отмечают друг друга и требуют проверить их двор — готовая серийная механика."}
-    ]},
-    {date:"16.07.2026", items:[
-      {t:"Кондиционер вне закона?",d:"Летний юр-ликбез: в каких домах кондиционер на фасаде могут заставить снять и как повесить его законно. Тема, которая в жару касается каждого второго — сохранения и пересылки гарантированы."},
-      {t:"Балкон-кинотеатр за 15 000 ₽",d:"Превращаем обычный балкон в летний кинозал: проектор, простыня-экран, кресло-мешок, гирлянда. Дешёвая трансформация, которую зритель может повторить в эти же выходные, — идеальный рецепт репостов."},
-      {t:"Этажи-жертвы: куда летит вся живность",d:"Честная карта лета: комары до какого этажа долетают, куда селятся голуби, где бегают муравьи. Каждый пишет в комментариях свой этаж и свою фауну — алгоритм обожает такие переклички."}
-    ]},
-    {date:"15.07.2026", items:[
-      {t:"Шумомер против соседей",d:"Замеряем децибелы в панельке, монолите и кирпиче: перфоратор за стеной, каблуки сверху, вечеринка снизу. Каждый узнает свой дом и отметит соседа в комментариях — это и есть механика охвата."},
-      {t:"Ливень-тест новостройки",d:"Идём в свежесданный ЖК сразу после июльской грозы: что течёт — козырьки, швы, паркинг. Погода бесплатно устраивает проверку, которую не подделать, а соседи по ЖК разнесут ролик по чатам."},
-      {t:"«7 минут до метро»: проверка таймером",d:"Берём объявления и проходим заявленный путь с таймером на экране — шагом, с коляской, в жару. Разоблачение любимого вранья объявлений сразу целит в миллионы людей, которые на это попадались."}
-    ]},
-    {date:"14.07.2026", items:[
-      {t:"Жара-тест: на каком этаже плавится квартира",d:"Июльский замер: термометр в одинаковых квартирах на 2-м, 9-м и последнем этаже, солнечная и теневая сторона. Каждый, кто задыхается этим летом, проверит свой этаж и перешлёт соседям."},
-      {t:"Двор всё расскажет",d:"Приходим во двор сданного год назад ЖК и спрашиваем жильцов: «купили бы здесь снова?». Честные ответы вместо рекламных буклетов — формат, который боятся застройщики и обожает алгоритм."},
-      {t:"Дикие балконы города",d:"Еженедельный рейтинг самых безумных самодельных балконов: стеклянные скворечники, балкон-баня, балкон-огород. Зрители присылают адреса в комментарии — контент воспроизводит сам себя."}
-    ]},
-    {date:"12.07.2026", items:[
-      {t:"Цена метра в граммах золота",d:"Пересчитываем квартиру в золото, айфоны и шаурму: «эта однушка = 1 240 шаурмы в месяц 30 лет». Абсурдная единица измерения = скриншоты и репосты."},
-      {t:"Собери квартиру за свою зарплату",d:"Стрит-интервью: называют зарплату — на экране конструктор собирает, что реально купить: полкомнаты, санузел в области, кладовка в центре. Больно, смешно, вирусно."},
-      {t:"Окно в окно: рейтинг худших видов города",d:"Зрители присылают фото из своих окон, мы делаем еженедельный «антирейтинг видов» с оценкой, на сколько такой вид роняет цену. Контент делает сама аудитория."}
+  var FRESH=[
+    {date:"13.08.2026",items:[
+      {t:"Город, который дышит",d:"Многоэтажки медленно поднимаются и опускаются, как грудная клетка спящего. Гипнотическая петля, которую пересматривают по три раза — идеальный первый ролик серии «Живой город»."},
+      {t:"Что внутри у обычных вещей",d:"Разрезаем предметы, внутри которых оказывается не то, что должно быть: в мяче — океан, в телефоне — город, в яблоке — галактика. Серия с бесконечным запасом выпусков."},
+      {t:"Последний человек в городе",d:"Один человек идёт по абсолютно пустому мегаполису, всё работает, но людей нет. Тихий постапокалипсис — формат, который досматривают ради разгадки."}
     ]}
   ];
 
-  var NEURO = [
-    {t:"Дом из детского рисунка",d:"Оживляем рисунок ребёнка в фотореалистичный дом с облётом камеры. Запускаем UGC-волну: «присылайте рисунки — построим». Родители затащат вам весь охват города.",p:"A child's crayon drawing of a house transforms into a photorealistic modern building, camera orbits around it, morphing animation, warm evening light, vertical 9:16"},
-    {t:"Таймлапс столетия",d:"Один и тот же перекрёсток: 1925 → 1965 → 1995 → 2025 → 2125. Дома растут, стили меняются, в финале — ваш ЖК. История города за 20 секунд.",p:"Same street corner evolving through decades 1925 to 2125, buildings morphing between architectural styles, seamless timelapse transitions, cinematic, vertical 9:16"},
-    {t:"Квартира собирается сама",d:"Пустая бетонная коробка: мебель влетает в окна, обои разворачиваются рулонами, свет вспыхивает. Финальный титр: «мы делаем это 90 дней, нейросеть — 8 секунд. зато у нас по-настоящему».",p:"Empty concrete apartment assembling itself: furniture flying in through windows, wallpaper unrolling across walls, lamps lighting up one by one, satisfying stop-motion style, vertical 9:16"},
-    {t:"Разрез дома, как кукольный",d:"Камера отъезжает — фасад многоэтажки снят, видно все квартиры разом: кто ужинает, кто делает ремонт, кто спит. «В каждой ячейке — жизнь. Найдём вашу».",p:"Cross-section dollhouse view of a residential building at night, camera slowly pulling back revealing dozens of lit apartments with tiny people living their lives, Wes Anderson style, vertical 9:16"},
-    {t:"Многоэтажка-торт",d:"Гигантский нож разрезает панельку как торт: этажи — коржи, утеплитель — крем. Сюр, от которого невозможно оторваться. Подпись: «а из чего на самом деле — в следующем ролике».",p:"Giant knife slicing a residential apartment building like a layered cake, floors as sponge layers, insulation as cream filling, hyperrealistic food commercial style, vertical 9:16"},
-    {t:"Прораб-великан",d:"Гигантский строитель в каске аккуратно ставит дома на район, как ребёнок — кубики LEGO, сверяясь с чертежом. Брендируем каску — и это уже реклама.",p:"A giant construction worker in a hard hat gently placing apartment buildings onto a city district like LEGO blocks, checking a blueprint, golden hour, cinematic scale, vertical 9:16"},
-    {t:"Студия-трансформер",d:"18 метров раскладываются как швейцарский нож: кровать уходит в стену, стол выезжает из подоконника, гардероб — из зеркала. Финал: реальная планировка-трансформер из вашего каталога.",p:"Tiny 18 sqm studio apartment transforming like a Swiss army knife: bed folding into wall, desk sliding out of windowsill, mirror rotating into wardrobe, smooth mechanical animation, vertical 9:16"},
-    {t:"Путешествие внутрь стены",d:"Камера ныряет в розетку и летит внутри стены: провода как метро, утеплитель как сугробы, кирпич как каньоны. «Вот за что вы платите на самом деле» — ликбез о качестве стройки.",p:"Microscopic camera journey inside an apartment wall: electrical wires like subway tunnels, insulation like snow canyons, brick layers like cliffs, macro photography style, vertical 9:16"},
-    {t:"Наш ЖК в 2124 году",d:"Тот же двор через сто лет: летающий транспорт, сады на крышах, но дом стоит. Слоган: «строим на век — проверите». Смелое обещание, которое запоминается.",p:"Modern residential complex courtyard in year 2124: flying vehicles, rooftop gardens, holographic signs, the same building well-preserved, optimistic sci-fi, vertical 9:16"},
-    {t:"Ипотека: хоррор-трейлер",d:"Стилизованный трейлер фильма ужасов «30 ЛЕТ»: тёмный коридор банка, эхо «одобрено…». Твист в конце: «страшно только без расчёта. посчитаем — станет просто цифрой».",p:"Horror movie trailer style: dark endless bank corridor, flickering fluorescent lights, ominous stamped documents flying, dramatic red title text, cinematic film grain, vertical 9:16"},
-    {t:"Дом-Мёбиус",d:"ASMR-облёт невозможной архитектуры: лестницы Эшера, дом-лента Мёбиуса, бесконечный подъезд. Подпись: «нравится невозможное? реальные планировки не хуже — в профиле».",p:"Impossible Escher-style residential building: staircases looping into themselves, Mobius strip apartment block, clouds passing through windows, dreamlike, smooth drone orbit, vertical 9:16"},
-    {t:"Город из бетономешалки",d:"Бетономешалка наклоняется — и из неё выливается готовый микрорайон: дома, дороги, деревья встают на места. Метафора «строим под ключ» в одном кадре.",p:"Concrete mixer truck pouring out a complete miniature city district: buildings, roads and trees rising from the flowing concrete and snapping into place, tilt-shift miniature style, vertical 9:16"},
-    {t:"Ремонт-морфинг за 2 секунды",d:"Бабушкин ковёр на стене плавно перетекает в скандинавский интерьер и обратно — гипнотическая петля. Идеальный зацикленный ролик: его досматривают по три раза.",p:"Seamless morphing loop: old soviet apartment with carpet on wall smoothly transforming into minimalist scandinavian interior and back, satisfying transition, perfect loop, vertical 9:16"},
-    {t:"Квартиры героев — в нашем городе",d:"Нейро-рендеры: как выглядела бы квартира Шерлока, Тони Старка или Гарри Поттера в типовой планировке вашего ЖК. Серийный формат с бесконечным запасом героев.",p:"Iconic fictional character's apartment reimagined inside a typical modern Russian apartment layout, recognizable style details, interior design photography, vertical 9:16"},
-    {t:"Дом по знаку зодиака",d:"12 серий: нейросеть генерирует дом мечты для каждого знака. Львам — пафос, ракам — уют, козерогам — кабинет. Люди отмечают друзей своего знака — это и есть механика охвата.",p:"Dream house designed for a zodiac sign personality, exaggerated character details in architecture and interior, cozy cinematic lighting, series-consistent style, vertical 9:16"},
-    {t:"Цифровой дублёр-риелтор",d:"Аватар (HeyGen/Synthesia) читает 30-секундную сводку рынка каждое утро, пока живая команда спит. Подпись честная: «это нейро-Я. живой я — на показах». Ежедневная рубрика без съёмок.",p:"Create a digital avatar presenter from one recorded video: daily 30-second real estate market news, consistent studio background with brand colors, natural russian speech"},
-    {t:"Времена года за одно окно",d:"Один и тот же вид из окна квартиры плавно проходит через зиму, весну, лето и осень за 10 секунд. «Вот что вы будете видеть каждый день ближайшие 30 лет» — эмоциональная привязка к конкретной квартире.",p:"View from an apartment window seamlessly cycling through four seasons in one continuous shot: snow melting into spring blossoms, summer green, autumn leaves falling, smooth morph transition, cinematic, vertical 9:16"},
-    {t:"Квартира дышит вместе с хозяином",d:"Стены плавно расширяются и сужаются, будто квартира дышит; свет пульсирует в такт. Метафора «дом — живой» под слоган «найдём жильё, с которым совпадёте по ритму». Гипнотично и запоминается.",p:"A cozy apartment interior gently breathing: walls softly expanding and contracting, warm light pulsing rhythmically like a slow heartbeat, dust particles floating, surreal calm atmosphere, seamless loop, vertical 9:16"},
-    {t:"Город вырастает из чертежа",d:"Синие линии чертежа на столе поднимаются со страницы и превращаются в объёмный светящийся город, который достраивается сам. Слоган «превращаем планы в дома» в одном кадре — идеальная заставка канала.",p:"Blue architectural blueprint lines lifting off the paper and rising into a glowing 3D wireframe city that fills itself with detailed buildings, holographic style, dark background, cinematic, vertical 9:16"}
+  var RULES=[
+    "Ролик, который вы стесняетесь выложить, обычно и залетает. Выкладывайте.",
+    "Если сомневаетесь между двумя идеями — берите ту, что проще снять сегодня.",
+    "Не досняли до идеала? Идеал не выходит в ленту. Выходит выложенное.",
+    "Плохой хук убивает хороший ролик. Хороший хук вытягивает средний.",
+    "Три неудачных ролика подряд — это не провал, это данные.",
+    "Не меняйте формат, пока не выложили по нему пять роликов.",
+    "Сегодняшний ролик важнее вчерашней статистики."
   ];
 
-  var PSY = [
-    {n:"Приём 01",h:"Продавайте следующий шаг, а не квартиру",p:"Никто не покупает квартиру из ролика. Из ролика покупают шаг: сохранить чек-лист, написать «хочу разбор», прийти на просмотр.",d:"В виральных роликах CTA — только микрошаг. «Купите» оставьте менеджеру."},
-    {n:"Приём 02",h:"Будьте на стороне зрителя, не рынка",p:"Человек ждёт подвоха от всех, кто продаёт метры. Тот, кто вскрывает уловки рынка, автоматически выходит из категории «продавцов» в категорию «своих».",d:"Раз в неделю публично отговаривайте от плохой покупки. Это лучшая реклама из возможных."},
-    {n:"Приём 03",h:"Чужое счастье продаёт лучше оффера",p:"Ролик «реакция на ключи» не продаёт ничего — и продаёт всё: зритель примеряет эмоцию на себя и запоминает, с кем она случилась.",d:"Снимайте каждое вручение ключей. Это бесплатный конвейер социальных доказательств."},
-    {n:"Приём 04",h:"Конкретика вместо обещаний",p:"«Поможем выгодно» — шум. «Сбили 700 000 за 40 минут торга» — факт, который мозг сохраняет и пересказывает друзьям.",d:"В каждом ролике минимум одна точная цифра из реальной практики."},
-    {n:"Приём 05",h:"Дефицит — фактом, не капслоком",p:"«УСПЕЙ КУПИТЬ!» вызывает защитную реакцию. «В этом доме осталось две таких планировки» — просто информация, но действует сильнее.",d:"Дефицит произносится один раз, спокойным тоном, без восклицательного знака."},
-    {n:"Приём 06",h:"Незакрытые петли",p:"Сериал держит зрителя оборванной сценой. Канал — так же: «в следующей серии вскрываем стяжку» превращает случайного зрителя в подписчика.",d:"Каждый флагманский ролик заканчивайте анонсом следующего."},
-    {n:"Приём 07",h:"Продажа живёт в закрепе",p:"Ролик собирает миллион, потому что не продаёт. Продаёт закреплённый комментарий: «Чек-лист приёмки — по слову ЦЕХ в директ».",d:"Виральный ролик + продающий закреп = охват и лиды без конфликта."},
-    {n:"Приём 08",h:"Персонажи сильнее логотипа",p:"Подписываются на прораба Саныча и Настю-приёмщицу, а не на юрлицо. Персонаж с характером = сериальность = привычка возвращаться.",d:"Введите 2–3 постоянных лица с ролями: эксперт, скептик, новичок."},
-    {n:"Приём 09",h:"Дайте зрителю почувствовать себя умным",p:"Форматы «угадай цену» и «найди подвох» работают, потому что зритель выигрывает. Победивший зритель ассоциирует победу с вашим каналом.",d:"Никогда не высмеивайте неправильные ответы в комментариях. Умными должны уйти все."},
-    {n:"Приём 10",h:"Признание ошибки — валюта доверия",p:"Прогноз не сбылся, флип ушёл в минус — покажите это. Один честный разбор провала стоит десяти кейсов успеха: он невоспроизводим конкурентами.",d:"Раз в квартал — ролик «где мы ошиблись». Смотрите, как растёт глубина комментариев."}
-  ];
-
-  /* ---------- утилиты ---------- */
   function $(id){return document.getElementById(id)}
   function el(tag,cls,html){var e=document.createElement(tag);if(cls)e.className=cls;if(html!=null)e.innerHTML=html;return e}
-  var LS_DONE="ceh.done", LS_THEME="ceh.theme";
-  function loadDone(){try{return JSON.parse(localStorage.getItem(LS_DONE)||"[]")}catch(e){return[]}}
-  function saveDone(a){try{localStorage.setItem(LS_DONE,JSON.stringify(a))}catch(e){}}
-  var done=loadDone();
-
-  $("statR").textContent=RUBRICS.length;
-  $("statI").textContent=IDEAS.length;
-
-  /* ---------- тема ---------- */
-  var themeBtn=$("themeBtn"), themes=["auto","light","dark"],
-      themeNames={auto:"авто",light:"светлая",dark:"тёмная"};
-  function applyTheme(t){
-    if(t==="auto"){document.documentElement.removeAttribute("data-theme")}
-    else{document.documentElement.setAttribute("data-theme",t)}
-    themeBtn.textContent="Тема: "+themeNames[t];
-  }
-  var savedTheme=(function(){try{return localStorage.getItem(LS_THEME)}catch(e){return null}})()||"auto";
-  if(themes.indexOf(savedTheme)<0)savedTheme="auto";
-  /* «авто» не трогает data-theme: его может выставлять внешняя обёртка (просмотрщик) */
-  if(savedTheme==="auto"){themeBtn.textContent="Тема: авто"}
-  else{applyTheme(savedTheme)}
-  themeBtn.addEventListener("click",function(){
-    savedTheme=themes[(themes.indexOf(savedTheme)+1)%themes.length];
-    try{localStorage.setItem(LS_THEME,savedTheme)}catch(e){}
-    applyTheme(savedTheme);
-  });
+  function pick(a){return a[Math.floor(Math.random()*a.length)]}
+  function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
 
   /* ---------- вкладки ---------- */
-  var tabs=Array.prototype.slice.call(document.querySelectorAll(".tab"));
-  function showTab(name){
+  var tabs=[].slice.call(document.querySelectorAll(".tab"));
+  var names=["engine","formats","prompts","hooks","growth","plan","fresh"];
+  function show(name){
     tabs.forEach(function(t){t.setAttribute("aria-selected",String(t.dataset.tab===name))});
-    ["rubrics","ideas","hooks","psy","system","fresh","neuro"].forEach(function(s){
-      $("sec-"+s).hidden=(s!==name);
-    });
-    window.scrollTo({top:0});
+    names.forEach(function(n){$("sec-"+n).hidden=(n!==name)});
   }
-  tabs.forEach(function(t){t.addEventListener("click",function(){showTab(t.dataset.tab)})});
+  tabs.forEach(function(t){t.addEventListener("click",function(){show(t.dataset.tab)})});
 
-  /* ---------- рубрикатор ---------- */
-  var rgrid=$("rgrid");
-  RUBRICS.forEach(function(r,i){
-    var card=el("article","rcard");
-    card.appendChild(el("div","rcard-top",
-      '<span class="rcode mono">'+r.c+'</span><span class="rfreq mono">'+r.f+'</span>'));
-    card.appendChild(el("h3",null,r.n));
-    card.appendChild(el("p","what",r.what));
-    card.appendChild(el("p","psy","<b>"+r.psy+"</b> — "+r.note));
-    var go=el("button","go mono","Идеи рубрики →");
-    go.type="button";
-    go.addEventListener("click",function(){
-      rubFilter=i; potFilter=null; $("q").value="";
-      renderChips(); renderIdeas(); showTab("ideas");
-    });
-    card.appendChild(go);
-    rgrid.appendChild(card);
+  /* ---------- форматы ---------- */
+  var fg=$("formatGrid");
+  FORMATS.forEach(function(f){
+    var c=el("article","fcard");
+    c.appendChild(el("span","mech",esc(f.m)));
+    c.appendChild(el("h3",null,esc(f.t)));
+    c.appendChild(el("p",null,esc(f.d)));
+    c.appendChild(el("p","test",esc(f.x)));
+    fg.appendChild(c);
   });
 
-  /* ---------- банк идей ---------- */
-  var rubFilter=null, potFilter=null;
-  var rubChips=$("rubChips"), potChips=$("potChips"),
-      ideaList=$("ideaList"), ideaEmpty=$("ideaEmpty"), q=$("q");
-
-  function chip(label,pressed,fn){
-    var b=el("button","chip mono",label);
+  /* ---------- промпты ---------- */
+  var groups=[];
+  PROMPTS.forEach(function(p){if(groups.indexOf(p.g)<0)groups.push(p.g)});
+  var activeGroup="все",query="";
+  var fw=$("pFilters");
+  ["все"].concat(groups).forEach(function(g){
+    var b=el("button","filt",esc(g));
     b.type="button";
-    b.setAttribute("aria-pressed",String(pressed));
-    b.addEventListener("click",fn);
-    return b;
-  }
-  function renderChips(){
-    rubChips.innerHTML="";
-    rubChips.appendChild(chip("Все рубрики",rubFilter===null,function(){rubFilter=null;renderChips();renderIdeas()}));
-    RUBRICS.forEach(function(r,i){
-      rubChips.appendChild(chip(r.c+" "+r.n,rubFilter===i,function(){
-        rubFilter=(rubFilter===i?null:i);renderChips();renderIdeas();
-      }));
+    b.setAttribute("aria-pressed",String(g==="все"));
+    b.addEventListener("click",function(){
+      activeGroup=g;
+      [].slice.call(fw.children).forEach(function(x){x.setAttribute("aria-pressed",String(x===b))});
+      renderPrompts();
     });
-    potChips.innerHTML="";
-    potChips.appendChild(chip("Все типы",potFilter===null,function(){potFilter=null;renderChips();renderIdeas()}));
-    Object.keys(POTS).forEach(function(p){
-      potChips.appendChild(chip(POTS[p],potFilter===p,function(){
-        potFilter=(potFilter===p?null:p);renderChips();renderIdeas();
-      }));
-    });
-  }
+    fw.appendChild(b);
+  });
+  $("pSearch").addEventListener("input",function(e){query=e.target.value.toLowerCase().trim();renderPrompts()});
 
-  function ideaCode(i){
-    var r=IDEAS[i].r, n=0;
-    for(var k=0;k<=i;k++){if(IDEAS[k].r===r)n++}
-    return RUBRICS[r].c.replace("Р-","")+"."+(n<10?"0"+n:n);
-  }
-  function matches(idea){
-    if(rubFilter!==null&&idea.r!==rubFilter)return false;
-    if(potFilter!==null&&idea.p!==potFilter)return false;
-    var s=q.value.trim().toLowerCase();
-    if(s&&(idea.t+" "+idea.d).toLowerCase().indexOf(s)<0)return false;
-    return true;
-  }
-  function renderProgress(){
-    $("progress").innerHTML="Снято <b>"+done.length+"</b> / "+IDEAS.length;
-  }
-  function renderIdeas(){
-    ideaList.innerHTML="";
+  function renderPrompts(){
+    var list=$("promptList");list.innerHTML="";
     var shown=0;
-    IDEAS.forEach(function(idea,i){
-      if(!matches(idea))return;
+    PROMPTS.forEach(function(p){
+      if(activeGroup!=="все"&&p.g!==activeGroup)return;
+      if(query&&(p.t+" "+p.d+" "+p.p+" "+p.g).toLowerCase().indexOf(query)<0)return;
       shown++;
-      var code=ideaCode(i);
-      var card=el("article","idea"+(done.indexOf(i)>=0?" done":""));
-      card.dataset.idx=i;
-      card.appendChild(el("span","code mono",code));
-      var body=el("div","idea-body");
-      body.appendChild(el("h3","it",idea.t));
-      body.appendChild(el("p","id",idea.d));
-      var badges=el("div","badges mono");
-      badges.appendChild(el("span","badge",RUBRICS[idea.r].c+" "+RUBRICS[idea.r].n));
-      badges.appendChild(el("span","badge p-"+idea.p,POTS[idea.p]));
-      body.appendChild(badges);
-      card.appendChild(body);
-      var btn=el("button","shot mono",done.indexOf(i)>=0?"✓ снято":"снято?");
-      btn.type="button";
-      btn.addEventListener("click",function(){
-        var at=done.indexOf(i);
-        if(at>=0)done.splice(at,1);else done.push(i);
-        saveDone(done);renderIdeas();renderProgress();
-      });
-      card.appendChild(btn);
-      ideaList.appendChild(card);
+      var c=el("article","pcard");
+      c.appendChild(el("span","tag",esc(p.g)));
+      c.appendChild(el("h3",null,esc(p.t)));
+      c.appendChild(el("p",null,esc(p.d)));
+      c.appendChild(el("div","prompt",esc(p.p)));
+      var b=el("button","copy","⧉ Скопировать");
+      b.type="button";
+      b.addEventListener("click",function(){copy(p.p,b)});
+      c.appendChild(b);
+      list.appendChild(c);
     });
-    ideaEmpty.hidden=shown>0;
-    renderProgress();
+    $("pEmpty").hidden=shown>0;
   }
-  q.addEventListener("input",renderIdeas);
+  function copy(text,btn){
+    var ok=function(){var o=btn.textContent;btn.textContent="✓ Скопировано";setTimeout(function(){btn.textContent=o},1500)};
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(ok,function(){fallback(text,ok)});
+    }else fallback(text,ok);
+  }
+  function fallback(text,ok){
+    var ta=document.createElement("textarea");ta.value=text;
+    ta.style.position="fixed";ta.style.opacity="0";
+    document.body.appendChild(ta);ta.select();
+    try{document.execCommand("copy");ok()}catch(e){}
+    document.body.removeChild(ta);
+  }
+  renderPrompts();
 
-  $("roulette").addEventListener("click",function(){
-    var pool=[];
-    IDEAS.forEach(function(idea,i){
-      if(matches(idea)&&done.indexOf(i)<0)pool.push(i);
+  /* ---------- хуки, подписи, рост ---------- */
+  function rows(target,data){
+    var w=$(target);
+    data.forEach(function(r){
+      var row=el("div","row");
+      row.appendChild(el("div","k",esc(r.k)));
+      var b=el("div");
+      b.appendChild(el("h3",null,esc(r.t)));
+      b.appendChild(el("p",null,esc(r.d)));
+      if(r.s)b.appendChild(el("span","said",esc(r.s)));
+      row.appendChild(b);
+      w.appendChild(row);
     });
-    if(!pool.length){
-      IDEAS.forEach(function(idea,i){if(done.indexOf(i)<0)pool.push(i)});
-      if(pool.length){rubFilter=null;potFilter=null;q.value="";renderChips();renderIdeas()}
-    }
-    if(!pool.length)return;
-    var pick=pool[Math.floor(Math.random()*pool.length)];
-    var card=ideaList.querySelector('[data-idx="'+pick+'"]');
-    if(card){
-      card.classList.add("flash");
-      card.scrollIntoView({behavior:"smooth",block:"center"});
-      setTimeout(function(){card.classList.remove("flash")},2400);
-    }
-  });
+  }
+  rows("hookRows",HOOKS);
+  rows("capRows",CAPTIONS);
+  rows("growthRows",GROWTH);
 
-  renderChips();
-  renderIdeas();
-
-  /* ---------- хуки ---------- */
-  var hg=$("hgroups");
-  HOOK_GROUPS.forEach(function(g){
-    var box=el("div","hgroup");
-    box.appendChild(el("h3","mono",g.n));
-    box.appendChild(el("p","why",g.why));
+  /* ---------- этапы ---------- */
+  var pg=$("phaseGrid");
+  PHASES.forEach(function(f){
+    var c=el("article","phase");
+    c.appendChild(el("span","num",esc(f.n)));
+    c.appendChild(el("h3",null,esc(f.t)));
+    c.appendChild(el("span","win",esc(f.w)));
     var ul=el("ul");
-    g.items.forEach(function(h){ul.appendChild(el("li",null,h))});
-    box.appendChild(ul);
-    hg.appendChild(box);
-  });
-  function rnd(a){return a[Math.floor(Math.random()*a.length)]}
-  $("genBtn").addEventListener("click",function(){
-    $("genOut").textContent=rnd(GEN.a)+" "+rnd(GEN.b)+". "+rnd(GEN.c);
+    f.l.forEach(function(li){ul.appendChild(el("li",null,esc(li)))});
+    c.appendChild(ul);
+    pg.appendChild(c);
   });
 
   /* ---------- свежее ---------- */
   var fl=$("freshList");
-  FRESH.forEach(function(drop,di){
-    var head=el("div","fdate mono","Поставка "+drop.date+(di===0?' <span class="fnew">новое</span>':""));
-    fl.appendChild(head);
+  FRESH.forEach(function(drop,i){
+    fl.appendChild(el("div","drop-head","Поставка "+esc(drop.date)+(i===0?' <span class="new">новое</span>':"")));
     drop.items.forEach(function(it){
-      var card=el("article","idea");
-      var body=el("div","idea-body");
-      body.appendChild(el("h3","it",it.t));
-      body.appendChild(el("p","id",it.d));
-      card.appendChild(body);
-      fl.appendChild(card);
+      var c=el("article","fresh-item");
+      c.appendChild(el("h3",null,esc(it.t)));
+      c.appendChild(el("p",null,esc(it.d)));
+      fl.appendChild(c);
     });
   });
 
-  /* ---------- нейро ---------- */
-  var ng=$("neuroGrid");
-  NEURO.forEach(function(n,i){
-    var c=el("article","pcard");
-    c.appendChild(el("span","pn mono","Нейро "+(i<9?"0":"")+(i+1)));
-    c.appendChild(el("h3",null,n.t));
-    c.appendChild(el("p",null,n.d));
-    var pr=el("div","prompt mono",'<span class="plabel">Заготовка промпта</span>'+n.p);
-    c.appendChild(pr);
-    var cb=el("button","copybtn mono ntool","⧉ Копировать промпт");
-    cb.type="button";
-    cb.addEventListener("click",function(){
-      var ok=function(){cb.textContent="✓ Скопировано";setTimeout(function(){cb.textContent="⧉ Копировать промпт"},1600)};
-      if(navigator.clipboard&&navigator.clipboard.writeText){
-        navigator.clipboard.writeText(n.p).then(ok,function(){})
-      }else{
-        var ta=document.createElement("textarea");ta.value=n.p;
-        document.body.appendChild(ta);ta.select();
-        try{document.execCommand("copy");ok()}catch(e){}
-        document.body.removeChild(ta);
-      }
-    });
-    c.appendChild(cb);
-    ng.appendChild(c);
+  /* ---------- движок ---------- */
+  function today(){var d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+  function dayKey(offset){var d=new Date();d.setDate(d.getDate()-offset);return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+
+  function load(){
+    try{var raw=localStorage.getItem("np_days");return raw?JSON.parse(raw):[]}catch(e){return []}
+  }
+  function save(a){try{localStorage.setItem("np_days",JSON.stringify(a))}catch(e){}}
+
+  function streakOf(days){
+    var s=0;
+    for(var i=0;i<400;i++){
+      if(days.indexOf(dayKey(i))>=0)s++;
+      else if(i===0)continue;
+      else break;
+    }
+    return s;
+  }
+
+  function renderStreak(){
+    var days=load();
+    $("sTotal").textContent=days.length;
+    $("sStreak").textContent=streakOf(days);
+    var g=$("days");g.innerHTML="";
+    for(var i=13;i>=0;i--){
+      var k=dayKey(i);
+      var d=el("div","day"+(days.indexOf(k)>=0?" on":"")+(i===0?" today":""));
+      d.title=k;
+      g.appendChild(d);
+    }
+    var b=$("btnDone");
+    if(days.indexOf(today())>=0){b.textContent="✓ Сегодня выложено";b.className="btn done"}
+    else{b.textContent="✓ Отметить: выложил сегодня";b.className="btn ghost"}
+  }
+
+  $("btnDone").addEventListener("click",function(){
+    var days=load(),t=today(),i=days.indexOf(t);
+    if(i>=0)days.splice(i,1);else days.push(t);
+    save(days);renderStreak();
   });
 
-  /* ---------- психология ---------- */
-  var pg=$("pgrid");
-  PSY.forEach(function(p){
-    var c=el("article","pcard");
-    c.appendChild(el("span","pn mono",p.n));
-    c.appendChild(el("h3",null,p.h));
-    c.appendChild(el("p",null,p.p));
-    c.appendChild(el("p","do","<b>Как применять:</b> "+p.d));
-    pg.appendChild(c);
+  $("btnGen").addEventListener("click",function(){
+    var f=pick(FORMATS),p=pick(PROMPTS.filter(function(x){return x.g===f.m})),h=pick(HOOKS),c=pick(CAPTIONS);
+    if(!p)p=pick(PROMPTS);
+    var r=$("reel");
+    r.innerHTML="";
+    var top=el("div","reel-top");
+    top.appendChild(el("span",null,"задание собрано"));
+    top.appendChild(el("span",null,new Date().toLocaleDateString("ru-RU")));
+    r.appendChild(top);
+
+    function slot(label,text,big){
+      var s=el("div","reel-slot");
+      s.appendChild(el("h4",null,esc(label)));
+      s.appendChild(el("p",big?"big":null,esc(text)));
+      return s;
+    }
+    r.appendChild(slot("формат",f.t,true));
+    r.appendChild(slot("сюжет",p.t+" — "+p.d));
+    r.appendChild(slot("первый кадр",h.s||h.t));
+    r.appendChild(slot("подпись",c.s||c.t));
+
+    var b=el("button","copy","⧉ Скопировать промпт");
+    b.type="button";
+    b.style.cssText="margin-top:auto;border-color:rgba(244,245,248,.3);color:rgba(244,245,248,.85)";
+    b.addEventListener("click",function(){copy(p.p,b)});
+    r.appendChild(b);
   });
+
+  $("rule").textContent=pick(RULES);
+  renderStreak();
+  show("engine");
 })();
 </script>
 <!-- ARTIFACT-END -->
