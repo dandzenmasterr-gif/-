@@ -577,15 +577,15 @@
      в note пишется, что именно усилили. Новая версия заменяет старую,
      только если она действительно точнее. */
   var PROMPTS=[
-    {g:"петля",t:"Кофе, которое льётся вечно",v:2,upd:"14.08.2026",swap:"напиток и посуду",
+    {g:"петля",t:"Кофе, которое льётся вечно",v:3,upd:"15.08.2026",swap:"напиток и посуду",
      d:"Замкнутый круг: кофе переливается через край, стекает со стола и поднимается обратно в носик. Первый и последний кадр совпадают — зритель пересматривает и не замечает стыка.",
-     note:"Добавлены камера и оптика, затвор 180°, плёночный грейд, поведение пены и явное требование совпадения первого и последнего кадра.",
-     p:"Locked-off macro, 50mm Cooke S4 on ARRI Alexa 35, no camera movement. A stream of dark roast coffee pours from a copper pot into an overflowing white ceramic cup, the spill running off the table edge and rising back up into the spout in one closed circuit. Worn oak table, soft warm window light from camera left, steam catching the backlight. Correct fluid physics: surface tension holding at the rim, crema breaking into micro-bubbles, no splashing. 24fps, 180-degree shutter, Kodak Vision3 250D grade, fine grain, focus pinned to the pour line. Cup sits in the lower third with empty space above. The final frame matches the opening frame exactly. Audio: steady pour, faint ceramic ring, quiet room tone, no music. No cuts, no text, no watermark, no hands in frame. Vertical 9:16"},
+     note:"Поток описан как ламинарный, свет получил температуру 3200K и рассеиватель, а условие петли уточнено: совпадать должны позиция струи, уровень налива и свет.",
+     p:"Locked-off macro, 50mm Cooke S4 on ARRI Alexa 35, no camera movement. A stream of dark roast coffee pours from a copper pot into an overflowing white ceramic cup, the spill running off the table edge and rising back up into the spout in one closed circuit. Worn oak table, 3200K window light from camera left through a sheer curtain, steam catching the backlight. The stream stays laminar and never breaks into droplets, surface tension holds along the rim, crema separates into micro-bubbles. 24fps, 180-degree shutter, Kodak Vision3 250D grade, fine grain, focus pinned to the pour line. Cup in the lower third, empty space above. The loop point must be invisible: the final frame matches frame one in stream position, fill level and light. Audio: steady pour, faint ceramic ring, room tone, no music. No cuts, no text, no watermark, no hands. Vertical 9:16"},
 
-    {g:"масштаб",t:"Гигант на городской площади",v:2,upd:"14.08.2026",swap:"предмет-гигант",
+    {g:"масштаб",t:"Гигант на городской площади",v:3,upd:"15.08.2026",swap:"предмет-гигант",
      d:"Обычная вещь размером с пятиэтажку посреди настоящей площади. Люди рядом работают линейкой — без них мозг не считывает масштаб.",
-     note:"Добавлены воздушная перспектива на верхней кромке, глубокая контактная тень и детализация швов в масштабе здания — три вещи, которые продают размер.",
-     p:"Wide establishing shot, 24mm anamorphic on ARRI Alexa 35, slow three-second push-in. A worn leather sneaker the size of a five-story building rests on wet cobblestones in a real European city square; the object itself never moves. Pedestrians with umbrellas walk past its sole, two of them stopping to look up. Overcast diffused daylight, no hard shadows. Physical accuracy sells the scale: a deep contact shadow under the sole, atmospheric haze desaturating the upper laces, water pooling against the rubber edge, stitching and scuffs rendered at true building scale. 24fps, 180-degree shutter, natural documentary grade, subtle anamorphic flare. Object fills the upper two thirds, people along the bottom edge. Audio: rain on stone, distant traffic, footsteps. No cuts, no text, no watermark. Vertical 9:16"},
+     note:"Камера опущена на уровень улицы со сходящимися вертикалями, а зернистость кожи привязана к размеру брусчатки — два самых честных признака настоящего масштаба.",
+     p:"Wide establishing shot, 24mm anamorphic on ARRI Alexa 35 at street level angled slightly up, slow three-second push-in. A worn leather sneaker the size of a five-story building rests on wet cobblestones in a real European city square; the object itself never moves. Pedestrians with umbrellas walk past its sole, two of them stopping to look up. Overcast diffused daylight, no hard shadows, verticals converging as they would on a real building. A deep contact shadow pools under the sole, atmospheric haze desaturates the upper laces, water collects against the rubber edge, and the leather grain reads at the size of paving slabs. 24fps, 180-degree shutter, natural documentary grade, subtle anamorphic flare. Object fills the upper two thirds, people along the bottom edge. Audio: rain on stone, distant traffic, footsteps. No cuts, no text, no watermark. Vertical 9:16"},
 
     {g:"морфинг",t:"Непрерывное превращение",v:2,upd:"14.08.2026",swap:"начальное и конечное существо",
      d:"Одно становится другим в одном кадре без склейки и без растворения. Держит до финальной формы — оторваться невозможно.",
@@ -681,6 +681,11 @@
 
   /* Ночные поставки: новые записи добавлять В НАЧАЛО массива */
   var FRESH=[
+    {date:"15.08.2026",items:[
+      {t:"Лифт сквозь эпохи",d:"Двери закрываются в 2026 году, открываются в 1975-м, потом в 2140-м — меняется всё, кроме кабины. Замкнутое пространство превращает машину времени в аттракцион ожидания: зритель досматривает ради следующего этажа."},
+      {t:"Вагон метро под водой",d:"Обычный вагон едет заполненный водой, между поручнями плавают рыбы, пассажиры невозмутимо читают. Абсурд, поданный как рутина, — люди пересылают такое со словами «это же наша ветка»."},
+      {t:"Сто лет износа за восемь секунд",d:"Новая кроссовка стареет до трухи и собирается обратно в идеальную — старение и восстановление в одной петле. Гипнотично, пересматривают по три раза, чтобы поймать момент разворота."}
+    ]},
     {date:"13.08.2026",items:[
       {t:"Город, который дышит",d:"Многоэтажки медленно поднимаются и опускаются, как грудная клетка спящего. Гипнотическая петля, которую пересматривают по три раза — идеальный первый ролик серии «Живой город»."},
       {t:"Что внутри у обычных вещей",d:"Разрезаем предметы, внутри которых оказывается не то, что должно быть: в мяче — океан, в телефоне — город, в яблоке — галактика. Серия с бесконечным запасом выпусков."},
